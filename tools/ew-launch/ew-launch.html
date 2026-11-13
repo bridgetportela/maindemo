@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snapshots and Review — Prototype (Mockup)</title>
+<style>
+:root{--blue:#4b75ff;--blue-d:#3b63f6;--ink:#222;--mute:#6d6d6d;--line:#d5d5d5;--bg:#f8f8f8}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.5 "Adobe Clean","Source Sans Pro",-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+button{font:inherit;cursor:pointer}
+code{background:#eee;padding:1px 6px;border-radius:6px;font-size:12px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.demo{background:#222;color:#cfcfcf;padding:6px 20px;display:flex;gap:12px;align-items:center;font-size:12px;flex-wrap:wrap}
+.demo b{color:#fff}.demo button,.demo select{font-size:12px;border-radius:99px;border:1px solid #555;background:#333;color:#fff;padding:3px 12px;width:auto}
+.demo button.on{background:#fff;color:#222;border-color:#fff;font-weight:700}
+.demo .sp{flex:1}.seg{display:flex;gap:4px}
+.shell{display:flex;min-height:calc(100vh - 36px)}
+.side{width:54px;padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--bg)}
+.logo{width:26px;height:26px;border-radius:6px;background:#eb1000;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.ic{width:34px;height:34px;border-radius:10px;border:0;background:none;font-size:17px;color:#444}
+.ic.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.col{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;gap:12px;flex-wrap:wrap}
+.crumb{font-size:13px;color:#555}.crumb b{color:var(--ink)}
+.main{margin:0 12px 12px 0;background:#fff;border:1px solid #e6e6e6;border-radius:16px;flex:1;position:relative}
+.btn{border:2px solid #2c2c2c;background:transparent;border-radius:99px;padding:3px 16px;font-weight:700;color:#2c2c2c}
+.btn:hover{background:#eaeaea}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}.btn.pri:hover{background:var(--blue-d);border-color:var(--blue-d)}
+.btn.ok{background:#2d9d78;border-color:#2d9d78;color:#fff}.btn.ok:hover{background:#238262}
+.btn.sm{padding:0 12px;font-size:12px}.btn.bad{border-color:#d31510;color:#d31510}.btn.bad:hover{background:#fdecea}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.link{background:none;border:0;color:var(--blue);font-weight:700;padding:0}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:1px 10px;border-radius:99px;margin:1px 4px 1px 0;white-space:nowrap}
+.c-green{background:#d7f0e6;color:#14614a}.c-amber{background:#fde7c8;color:#7a4300}.c-purple{background:#e6defb;color:#4b2fb0}
+.c-blue{background:#dbe6ff;color:#1d3fb3}.c-gray{background:#e9e9e9;color:#444}.c-red{background:#fcdcd9;color:#a1100c}
+.opt{font-size:10px;font-weight:700;background:#e9e9e9;color:#555;padding:1px 7px;border-radius:99px;margin-left:6px}
+.mute{color:var(--mute)}.small{font-size:12px}
+.tools{display:flex;justify-content:flex-end;gap:18px;align-items:center;padding:10px 20px;font-size:13px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:6px 20px 10px}
+.f{border:1px solid #bbb;background:#fff;border-radius:99px;padding:2px 14px;font-size:13px;font-weight:600}.f.warn{border-color:#d31510;color:#d31510}.f.on{background:#2c2c2c;color:#fff;border-color:#2c2c2c}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:700;color:var(--mute);text-align:left;padding:10px 16px;border-bottom:1px solid #e6e6e6}
+td{padding:11px 16px;border-bottom:1px solid #eee;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr.sel{background:#f0f4ff}tr.click{cursor:pointer}tr.click:hover{background:#f7f7f7}
+.nm{cursor:pointer;font-weight:600}.nm:hover{text-decoration:underline}
+input[type=checkbox]{accent-color:var(--blue);width:16px;height:16px}
+.batch{position:fixed;left:90px;right:36px;bottom:24px;background:var(--blue);color:#fff;border-radius:12px;padding:10px 16px;display:flex;gap:16px;align-items:center;box-shadow:0 4px 14px rgba(0,0,0,.25);flex-wrap:wrap;z-index:20}
+.batch button{background:none;border:0;color:#fff;font-weight:600;font-size:13px;padding:2px 4px}
+.batch button:hover{text-decoration:underline}.batch .sp{flex:1}
+.batch button[disabled]{opacity:.5;cursor:not-allowed;text-decoration:none}
+.menu{position:absolute;z-index:30;background:#fff;color:var(--ink);border:1px solid #e0e0e0;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);min-width:230px;padding:6px}
+.menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:7px 12px;border-radius:8px;color:var(--ink);font-weight:500}
+.menu button:hover{background:#f0f0f0;text-decoration:none}.menu button[disabled]{color:#aaa;cursor:not-allowed;background:none}
+.menu hr{border:0;border-top:1px solid #e6e6e6;margin:4px 0}.rel{position:relative;display:inline-block}
+.canvas{padding:16px 24px;border-right:1px solid #eee}
+.rail{display:flex;flex-direction:column;min-width:0}
+.rtabs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #eee}
+.rt{border:0;background:none;border-radius:99px;padding:3px 12px;font-weight:600;font-size:13px}.rt.on{background:#222;color:#fff}
+.rbody{padding:14px;flex:1}
+.blk{border:1px dashed #bbb;border-radius:10px;padding:12px;margin-bottom:10px;color:#555}
+.sitebar{display:flex;gap:14px;align-items:center;background:#1b2540;color:#fff;border-radius:10px;padding:8px 14px;font-size:13px;margin-bottom:8px}.sitebar span{opacity:.7}
+.hint{font-size:12px;color:var(--mute);margin-bottom:8px}
+.herobox{height:150px;border-radius:14px;padding:12px;margin-bottom:14px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;color:#fff;font-weight:700}
+.im0,.img.im0{background:linear-gradient(135deg,#2b3a8f,#6a7be0)}.im1,.img.im1{background:linear-gradient(135deg,#0e6b6b,#5ac8b0)}.im2,.img.im2{background:linear-gradient(135deg,#a8481b,#f0a35e)}
+.ed{outline:none;border-radius:6px;padding:2px 4px;margin:0 -4px}.ed:hover{background:#f3f6ff}.ed:focus{background:#eaf0ff;box-shadow:0 0 0 2px var(--blue)}
+h2.ed{font-size:26px;margin:6px -4px}
+.blk2{display:flex;justify-content:space-between;align-items:center;border:1px dashed #bbb;border-radius:10px;padding:8px 12px;margin-bottom:8px;color:#444}
+.ctl button{border:0;background:#f0f0f0;border-radius:6px;margin-left:4px;padding:2px 8px}
+.tl{border-left:2px solid #ddd;margin-left:6px;padding-left:16px}
+.tl div.it{position:relative;margin-bottom:14px}.tl div.it:before{content:"";position:absolute;left:-24px;top:5px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #2c2c2c}
+.note{padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:13px}
+.n-amber{background:#fff4e0;border:1px solid #f1c27a}.n-blue{background:#fff;border:1px solid #e0e0e0;box-shadow:0 1px 3px rgba(0,0,0,.06)}.n-green{background:#e8f6f0;border:1px solid #95d3bb}
+.pop{position:absolute;z-index:40;background:#fff;border:1px solid #e0e0e0;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.2);padding:14px;width:340px}
+.card2{border:2px solid #e0e0e0;border-radius:12px;padding:10px 14px;margin-bottom:10px}.card2.on{border-color:var(--blue);background:#eef3ff}
+.app{padding:36px 56px;max-width:1040px}
+h1{font-size:30px;margin:0 0 16px;font-weight:800}
+.row{background:#f6f6f6;border-bottom:2px solid #ececec;padding:16px 18px;font-weight:700;display:flex;justify-content:space-between;cursor:pointer}
+.exp{background:#e9f0ff;padding:16px 18px;display:grid;grid-template-columns:1fr 280px;gap:20px}
+.lbl{font-size:12px;font-weight:800;color:#444;margin:10px 0 3px}
+input[type=text],input[type=datetime-local],textarea,select{font:inherit;border:1px solid #bbb;border-radius:8px;padding:6px 10px;width:100%;background:#fff}
+.gb{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.gb button{border:0;background:#dde3ee;border-radius:6px;padding:10px 4px;font-size:12px;font-weight:700}
+.gb button.dk{background:#aeb6c4}.gb button.bl{background:var(--blue);color:#fff}
+.pb{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.pb button{background:#dbe6fb;border:0;border-radius:8px;padding:9px 14px;font-weight:700;font-size:13px}
+.steps{display:flex;margin:14px 0}
+.st{flex:1;text-align:center;padding:6px;border-bottom:3px solid #ddd;color:var(--mute);font-weight:700}.st.on{border-color:var(--blue);color:var(--ink)}.st.done{border-color:#2d9d78}
+.card{background:#fff;border:1px solid #e6e6e6;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.nbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;border-radius:12px;border:1px solid #e0e0e0;box-shadow:0 1px 3px rgba(0,0,0,.06);margin:12px 0;flex-wrap:wrap}
+.mockcfg{margin-top:16px;border:1px dashed #b5b5b5;border-radius:12px;background:#fafafa;padding:8px 12px;font-size:12px}
+.mockcfg .mh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.mockcfg .tag{font-size:10px;font-weight:800;letter-spacing:.05em;background:#222;color:#fff;border-radius:99px;padding:0 8px}
+.mockcfg .mrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;cursor:pointer}
+.mockcfg input[type=checkbox]{width:14px;height:14px;margin-top:2px}
+.optc{display:flex;gap:10px;align-items:flex-start;padding:12px 16px}
+.cm{border:1px solid #e0e0e0;border-radius:12px;padding:8px 12px;margin:8px 0}.cm .who{font-weight:700;font-size:12px}
+.bell{position:relative;border:0;background:none;font-size:18px;padding:2px 6px;border-radius:99px}.bell:hover{background:#eee}
+.bdg{position:absolute;top:-4px;right:-4px;background:#d31510;color:#fff;border-radius:99px;font-size:10px;padding:0 5px;font-weight:800;line-height:16px}
+.inbox{position:absolute;right:0;top:38px;width:380px;max-height:72vh;overflow:auto;background:#fff;border:1px solid #e0e0e0;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.2);padding:8px 0;z-index:45;text-align:left}
+.inbox .hd2{display:flex;justify-content:space-between;align-items:center;padding:6px 16px 8px;border-bottom:1px solid #eee}
+.inbox .sec{font-size:12px;font-weight:800;color:var(--mute);padding:10px 16px 2px}
+.ib{display:block;width:100%;text-align:left;background:none;border:0;padding:8px 16px;font-weight:500}.ib:hover{background:#f4f6ff}
+.ib .t{font-weight:700;display:flex;gap:6px;align-items:center}.ib .dot{width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block}
+.ib .s{font-size:12px;color:var(--mute);margin-top:1px;white-space:normal}
+.mention{background:#dbe6ff;color:#1d3fb3;border-radius:6px;padding:0 4px;font-weight:700}
+.stb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.stb button{border:1px solid #d5d5d5;border-radius:99px;padding:4px 14px;background:#fff;font-size:13px;font-weight:600}.stb button.on{border:2px solid #2c2c2c}.stb button[disabled]{opacity:.5;cursor:not-allowed}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:60;overflow:auto}
+.md{background:#fff;border-radius:24px;width:100%;max-width:520px;padding:24px;box-shadow:0 16px 48px rgba(0,0,0,.28)}.md.wide{max-width:900px}
+.md h2{margin:0 0 4px;font-size:18px;font-weight:800}.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;align-items:center}
+.pickbox{border:1px solid #d5d5d5;border-radius:12px;max-height:150px;overflow:auto;margin-top:6px}
+.pickbox label{font-size:14px;color:var(--ink);font-weight:500;margin:0;padding:6px 12px;display:flex;gap:8px;align-items:center;cursor:pointer}.pickbox label:hover{background:#f6f6f6}
+.pg{border:1px solid #e0e0e0;border-radius:16px;overflow:hidden;background:#fff}
+.pg .hd{background:#f3f3f3;padding:6px 14px;font-size:12px;font-weight:700;color:var(--mute)}.pg .in{padding:14px}.pg h3{margin:0 0 8px;font-size:16px}.pg p{margin:0 0 8px;font-size:13px}
+.img{height:70px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;margin-bottom:8px}
+.pb2{border:1px dashed #bbb;border-radius:8px;padding:6px 10px;margin-bottom:6px;font-size:12px;color:#555}
+.diff{outline:2px solid #e68619;background:#fff4e0;color:#222}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.two,.exp{grid-template-columns:1fr}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:99px;font-size:13px;z-index:90;display:none;gap:12px;align-items:center;max-width:90vw}
+#toast .btn{color:#fff;border-color:#fff;padding:0 12px}
+</style>
+</head>
+<body>
+<div class="demo" id="demo"></div>
+<div class="shell"><div class="side" id="side"></div><div class="col"><div class="top" id="top"></div><div class="main" id="main"></div></div></div>
+<div id="modal"></div><div id="toast"></div><div id="mpop" class="menu" style="display:none"></div>
+
+<script>
+const DATA = {"_note": "Fictional sample data for the prototype. Not real customers, people, or content.", "org": "scdemos", "site": "demo", "today": "2026-11-12T09:00:00-08:00", "users": [{"id": "you", "name": "Alex", "role": "author"}, {"id": "ravi", "name": "Ravi", "role": "reviewer"}, {"id": "sarah", "name": "Sarah", "role": "reviewer"}, {"id": "sam", "name": "Sam", "role": "watcher"}, {"id": "legal", "name": "Legal group", "role": "group", "members": ["ravi", "sarah"]}], "pages": [{"path": "/fr", "type": "folder", "children": ["/fr/accueil"]}, {"path": "/guided-journey", "type": "page"}, {"path": "/index", "type": "page", "title": "Real Trips. Real Routes. This Weekend.", "live": {"publishedAt": "2026-11-01T10:00:00-08:00"}, "lastUpdated": "2026-11-12T16:34:00-08:00"}, {"path": "/learn", "type": "folder", "children": ["/learn/hiking", "/learn/surfing"]}, {"path": "/learn/hiking", "type": "page", "title": "Hiking guide"}, {"path": "/learn/surfing", "type": "page", "title": "Surfing guide"}, {"path": "/start-here/booking-smart", "type": "page", "title": "Booking smart"}, {"path": "/media", "type": "folder", "children": []}, {"path": "/about-us", "type": "page", "title": "About us"}, {"path": "/blog", "type": "folder", "children": ["/blog/winter-hiking-tips", "/blog/packing-checklist"]}, {"path": "/blog/winter-hiking-tips", "type": "page", "title": "Winter hiking tips"}, {"path": "/blog/packing-checklist", "type": "page", "title": "Packing checklist"}, {"path": "/contact", "type": "page", "title": "Contact us"}, {"path": "/faq", "type": "page", "title": "Frequently asked questions"}, {"path": "/gear-guide", "type": "page", "title": "Gear guide"}, {"path": "/trail-safety", "type": "page", "title": "Trail safety"}], "snapshots": [{"id": "winter-campaign", "title": "Winter campaign", "description": "Winter adventures push: snowshoe routes and cozy road trips.", "state": "Draft", "locked": false, "createdAt": "2026-11-09", "scheduledFor": "2026-11-19T16:04:00-08:00", "nextStep": "Request review", "pages": [{"path": "/index", "state": "Up to date", "review": "Not reviewed"}, {"path": "/learn/hiking", "state": "Changed since added", "review": "Not reviewed", "currentDiff": {"headline": ["Real Trips. Real Routes. This Weekend.", "Your Next Adventure Is One Weekend Away"], "image": "swapped", "blocks": "reordered", "added": "new promo block"}}, {"path": "/learn/surfing", "state": "Up to date", "review": "Not reviewed"}, {"path": "/start-here/booking-smart", "state": "Up to date", "review": "Not reviewed"}]}, {"id": "fall-release", "title": "Fall release", "state": "In review", "locked": true, "createdAt": "2026-10-25", "scheduledFor": "2026-11-19T16:04:00-08:00", "nextStep": "Waiting for Sam", "pages": [{"path": "/index", "state": "Up to date", "review": "Approved"}, {"path": "/learn", "state": "Up to date", "review": "Needs changes"}]}, {"id": "summer-sale", "title": "Summer sale", "state": "Published", "locked": true, "createdAt": "2026-06-10", "publishedAt": "2026-07-01T09:00:00-07:00", "nextStep": null, "pages": [{"path": "/index", "state": "Up to date", "review": "Approved"}]}], "reviewRequest": {"snapshot": "winter-campaign", "workflow": "Page publish", "approvers": ["legal", "ravi"], "watchers": ["sam"], "note": "Ready for the winter launch.", "rejectReasonExample": "Legal wants the disclaimer updated."}, "comments": [{"id": "c1", "page": "/learn/hiking", "author": "you", "kind": "request-note", "text": "Ready for the winter launch.", "at": "2026-11-12T11:00:00-08:00"}, {"id": "c2", "page": "/learn/hiking", "author": "ravi", "kind": "reject-reason", "text": "Legal wants the disclaimer updated.", "at": "2026-11-12T13:00:00-08:00"}], "versions": {"/learn/hiking": [{"kind": "live", "label": "Live", "detail": "Published Nov 1"}, {"kind": "snapshot", "label": "fall-release", "detail": "In review \u00b7 publishes Nov 19"}, {"kind": "snapshot", "label": "winter-campaign", "detail": "Draft \u00b7 added Nov 9"}, {"kind": "draft", "label": "Current draft", "detail": "Edited today by Alex"}]}, "browseFilters": ["All", "Waiting on me", "My requests", "Scheduled", "Past due", "Review"], "demoSteps": "See reference/ew-northstar-launch-demo-script.docx, steps 1.1 to 6.3"};
+let S, db;
+const ROLES={author:{label:'Author',user:'you'},reviewer:{label:'Reviewer',user:'ravi'},reviewer2:{label:'Reviewer',user:'sarah'},watcher:{label:'Watcher',user:'sam'}};
+const isRev=()=>S.role==='reviewer'||S.role==='reviewer2';
+const meId=()=>ROLES[S.role].user;
+const MOD = {'/about-us':'Sep 14, 2026 9:15 AM','/contact':'Sep 14, 2026 9:20 AM','/faq':'Sep 30, 2026 1:05 PM','/gear-guide':'Nov 8, 2026 11:30 AM','/trail-safety':'Nov 10, 2026 4:10 PM','/blog/winter-hiking-tips':'Nov 6, 2026 2:45 PM','/blog/packing-checklist':'Nov 5, 2026 10:00 AM','/index':'Today 4:34 PM','/learn/hiking':'Nov 11, 2026 10:12 AM','/learn/surfing':'Nov 9, 2026 3:05 PM','/start-here/booking-smart':'Nov 7, 2026 9:40 AM','/guided-journey':'Sep 23, 2026 11:12 AM','/fr/accueil':'Oct 21, 2026 2:20 PM'};
+const WINTER = {'/index':'Winter Trips. Real Routes. This Weekend.','/learn/surfing':'Cold-Water Surf, Done Right','/start-here/booking-smart':'Book Your Winter Escape, Smartly','/learn':'Learn Something New This Season','/fr/accueil':"L'hiver commence ici"};
+const LIVE_H = {'/index':'Real Trips. Real Routes. This Weekend.','/learn/hiking':'Hike the Ridge This Weekend'};
+const WORKFLOWS={
+  'Request publish':{desc:'One approval, then publish',steps:[{title:'Approval',approvers:['legal','ravi']}],watchers:['sam']},
+  'Legal, then brand':{desc:'Two steps, then publish',steps:[{title:'Legal review',approvers:['legal']},{title:'Brand review',approvers:['sarah']}],watchers:['sam']}};
+const inGroup=(uid,id)=>id===uid||!!(DATA.users.find(u=>u.id===id)&&DATA.users.find(u=>u.id===id).members&&DATA.users.find(u=>u.id===id).members.includes(uid));
+const stepNames=ids=>ids.map(i=>DATA.users.find(u=>u.id===i).name).join(', ');
+const canApprove=(uid,sn)=>{const st=sn.steps&&sn.steps[sn.step]; return !!st&&st.approvers.some(a=>inGroup(uid,a));};
+function stepsHtml(sn){ if(!sn.steps||sn.state==='Draft') return '';
+  return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0 12px">${sn.steps.map((st,i)=>{const done=sn.state==='Published'||i<sn.step, cur=sn.state==='In review'&&i===sn.step; return `<span class="chip c-${done?'green':cur?'amber':'gray'}" title="${esc(stepNames(st.approvers))}">${done?'✓ ':''}${i+1}. ${esc(st.title)}</span>${i<sn.steps.length-1?'<span class="mute">→</span>':''}`;}).join('')}<span class="mute small">then publish</span></div>`; }
+const NOW=()=>new Date(DATA.today);
+let clockN=0; const tick=()=>new Date(NOW().getTime()+(++clockN)*5*60000).toISOString();
+const pageSchedFor=p=>(db.pageSchedule&&db.pageSchedule[p])||null;
+const overdue=sn=>sn.state!=='Published'&&!!sn.scheduledFor&&new Date(sn.scheduledFor)<NOW();
+const viaGroup=(uid,sn)=>{ const st=sn&&sn.steps&&sn.steps[sn.step]; if(!st||st.approvers.includes(uid)) return null; const g=st.approvers.find(a=>{const u=DATA.users.find(x=>x.id===a); return u&&u.role==='group'&&(u.members||[]).includes(uid);}); return g?uname(g):null; };
+function autoDone(snapId,pagePath){ const me=meId(); let n=0; db.comments.forEach(c=>{ if(c.snap===snapId&&!c.done&&c.author!==me&&mentionsIn(c.text).some(x=>myNames().includes(x))&&(c.page===null||c.page===pagePath||pagePath.startsWith(c.page+'/'))){ c.done={by:uname(me),kind:'done'}; n++; } }); return n; }
+function reqStatus(sn){ const st=sn.steps&&sn.steps[sn.step]; if(!st) return 'In review'; if(counts(sn).needs) return 'Changes requested'; if(counts(sn).not===0) return 'Approved · '+(sn.scheduledFor?'publishes '+fmt(sn.scheduledFor):'ready to publish'); return `Step ${sn.step+1} of ${sn.steps.length}: ${st.title} · waiting on ${stepNames(st.approvers)}`; }
+const pendingFor=p=>db.snapshots.filter(sn=>sn.state==='In review'&&entryFor(sn,p));
+const IMGS=['Hero image A','Hero image B','Hero image C'];
+const BODY='Plan your winter weekend with routes, gear tips and cozy stops along the way.';
+const FRAG_USE={'/fragments/header':'all','/fragments/footer':'all','/fragments/promo-banner':['/index','/learn/hiking']};
+const BODIES={'/fragments/header':'Site header: logo, search and main navigation.','/fragments/footer':'Site footer: links, legal text and social icons.','/fragments/promo-banner':'A banner used for seasonal promotions.','/index':'Real routes, real trips. Pick a weekend and go.','/learn/hiking':'From easy loops to snowshoe climbs, find a trail that fits your weekend.','/learn/surfing':'Cold-water spots, wetsuit tips and the best tides for beginners.','/start-here/booking-smart':'Book early, pack light and pick flexible dates to save on your winter trip.','/guided-journey':'Follow a step-by-step journey from first idea to packed bag.','/fr/accueil':"Des routes, des conseils et des idées pour votre prochaine escapade d'hiver.",'/learn':'Guides to help you learn a new outdoor skill this season.'};
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+function init(){
+  db = clone(DATA);
+  db.pages.push({path:'/start-here',type:'folder',children:['/start-here/booking-smart']});
+  db.live = {'/index':'2026-11-01T10:00:00-08:00','/learn/hiking':'2026-11-01T10:00:00-08:00','/learn/surfing':'2026-11-01T10:00:00-08:00','/about-us':'2026-09-14T10:00:00-07:00','/contact':'2026-09-14T10:00:00-07:00','/faq':'2026-09-30T14:00:00-07:00','/blog/winter-hiking-tips':'2026-11-06T15:00:00-08:00'};
+  db.content={}; db.liveContent={}; db.comments=[]; db.newPages={}; db.archive=[]; db.pageSchedule={}; db.ver={}; db.liveVia={}; db.early=[]; clockN=0;
+  const B=(...a)=>a.map(([id,t])=>({id,t})); const base=()=>B(['b1','Hero'],['b2','Cards'],['b3','Footer CTA']);
+  Object.assign(content('/learn/hiking'),{headline:'Your Next Adventure Is One Weekend Away',img:IMGS[1],blocks:B(['b2','Cards'],['b1','Hero'],['b4','New promo block'],['b3','Footer CTA'])});
+  Object.keys(db.live).forEach(p=>{ const c=clone(content(p)); c.headline=LIVE_H[p]||c.headline; c.img=IMGS[0]; c.blocks=base(); db.liveContent[p]=c; });
+  db.snapshots.forEach(s=>{ s.copies={}; s.base={}; if(s.state==='Published') return; s.pages.forEach(e=>[e.path].concat(kids(e.path)).forEach(x=>{ s.copies[x]=clone(content(x)); s.base[x]=clone(content(x)); })); });
+  const fr=db.snapshots.find(x=>x.id==='fall-release'); fr.blockDirect=true; fr.earlyAllowed=['sarah']; fr.approvers=['ravi']; fr.watchers=['sam'];
+  const w=db.snapshots.find(x=>x.id==='winter-campaign'); w.copies['/learn/hiking']=Object.assign(clone(content('/learn/hiking')),{headline:'Real Trips. Real Routes. This Weekend.',img:IMGS[0],blocks:base()});
+  w.base['/learn/hiking']=clone(w.copies['/learn/hiking']); w.launch=true; w.pages.find(e=>e.path==='/learn/hiking').synced=true; fr.password='x'; fr.workflow='Request publish'; fr.steps=clone(WORKFLOWS['Request publish'].steps); fr.step=0; db.fragments=['/fragments/header','/fragments/footer','/fragments/promo-banner'];
+  db.comments.push({snap:'fall-release',page:null,author:'you',kind:'request-note',text:'Ready for the fall release. @Ravi please check the disclaimer.',when:'Oct 26'},{snap:'fall-release',page:'/learn',author:'ravi',kind:'reject-reason',text:DATA.reviewRequest.rejectReasonExample+' @Alex can you update it?',when:'Oct 27'},{snap:'fall-release',page:null,author:'ravi',kind:'reply',text:'@Sam FYI, this is scheduled for Nov 19.',when:'Oct 28'});
+  Object.keys(db.live).forEach(x=>{ db.ver[x]=3; });
+  { const ss=db.snapshots.find(x=>x.id==='summer-sale'); ss.workflow='Request publish'; ss.record={publishedAt:ss.publishedAt,by:'Alex',requestedBy:'Alex',requestedAt:'2026-06-30T10:00:00-07:00',workflow:'Request publish',steps:[{title:'Approval',approvals:[{page:'/index',who:'Ravi',behalf:'Legal group',when:'2026-06-30T15:10:00-07:00'}]}],pages:[{path:'/index',title:'Real Trips. Real Routes. This Weekend.',version:2}]}; }
+  { const w=WORKFLOWS['Request publish']; const r=makePageRequest('/trail-safety','Request publish'); r.state='In review'; r.locked=true; r.workflow='Request publish'; r.steps=clone(w.steps); r.step=0; r.approvers=w.steps[0].approvers.slice(); r.watchers=w.watchers.slice();
+    db.comments.push({snap:r.id,page:null,author:'you',kind:'request-note',text:'Updated the trail safety guidance for winter. @Ravi please review.',when:'Nov 11'}); }
+  { const g=makePageRequest('/gear-guide','Request publish'); db.snapshots.shift(); db.snapshots.push({id:'gear-refresh',title:'Gear refresh',description:'Updated gear guide for the winter season.',state:'In review',locked:true,createdAt:'2026-11-04',scheduledFor:'2026-11-11T16:00:00-08:00',pages:[{path:'/gear-guide',review:'Not reviewed'}],copies:g.copies,base:g.base,workflow:'Request publish',steps:clone(WORKFLOWS['Request publish'].steps),step:0,approvers:WORKFLOWS['Request publish'].steps[0].approvers.slice(),watchers:WORKFLOWS['Request publish'].watchers.slice()});
+    db.comments.push({snap:'gear-refresh',page:null,author:'you',kind:'request-note',text:'Needs to go out before the weekend.',when:'Nov 4'}); }
+  S = {mode:'idea',role:'author',screen:'browse',path:'/learn/hiking',snapId:null,sel:new Set(),menu:null,modal:null,tab:'Versions',panels:false,sendOpen:false,open:null,openUrl:null,onlyEdited:false,sendTarget:'preview',filter:'All',revPath:null,reasonOpen:false,newView:'greyed',launchOpen:false,editSnap:null,railReason:null,earlierOpen:false,resolvedOpen:false,inbox:false,inboxRead:new Set()};
+}
+const U=id=>DATA.users.find(u=>u.id===id);
+const uname=id=>U(id).name;
+const snap = id => db.snapshots.find(s=>s.id===id);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = iso => iso?new Date(iso).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZone:'America/Los_Angeles'}):'';
+const fmtD = iso => new Date(iso.length===10?iso+'T12:00:00':iso).toLocaleDateString('en-US',{month:'numeric',day:'numeric',year:'numeric',timeZone:'America/Los_Angeles'});
+const toLocalInput = iso => { const d=new Date(new Date(iso).toLocaleString('en-US',{timeZone:'America/Los_Angeles'})); const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`; };
+const title = p => { if(db.newPages&&db.newPages[p]) return db.newPages[p].title; const pg=db.pages.find(x=>x.path===p); if(pg&&pg.title) return pg.title; const l=p.split('/').pop(); return l.charAt(0).toUpperCase()+l.slice(1).replace(/-/g,' '); };
+const idea = () => S.mode==='idea';
+const isAuthor = () => S.role==='author';
+const chip=(t,c)=>`<span class="chip c-${c}">${esc(t)}</span>`;
+const slug = t => t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+/* content model */
+const content=p=>db.content[p]||(db.content[p]={headline:WINTER[p]||title(p),body:BODIES[p]||BODY,img:IMGS[0],blocks:[{id:'b1',t:'Hero'},{id:'b2',t:'Cards'},{id:'b3',t:'Footer CTA'}]});
+const copyFor=(s,p)=>(s.copies&&s.copies[p])||content(p);
+const pageChanged=(s,p)=>!!(s.base&&s.base[p])&&JSON.stringify(s.base[p])!==JSON.stringify(content(p));
+const snapEdited=(s,p)=>!!(s.base&&s.base[p]&&s.copies&&s.copies[p])&&JSON.stringify(s.copies[p])!==JSON.stringify(s.base[p]);
+const entryChanged=(s,e)=>[e.path].concat(kids(e.path)).some(x=>pageChanged(s,x));
+const entryEdited=(s,e)=>[e.path].concat(kids(e.path)).some(x=>snapEdited(s,x));
+const entryState=(s,e)=>entryChanged(s,e)?'Update available':entryEdited(s,e)?'Overridden':'Up to date';
+const stateChips=(s,e)=>(entryChanged(s,e)||entryEdited(s,e))?(entryChanged(s,e)?chip('Update available','amber'):'')+(entryEdited(s,e)?chip('Overridden','purple'):''):chip('Up to date','green');
+const editable=s=>s.state==='Draft'&&!s.locked;
+const cur=()=>(S.editSnap&&snap(S.editSnap)&&snap(S.editSnap).copies[S.path])?snap(S.editSnap).copies[S.path]:content(S.path);
+const canPromote=(s,e)=>isAuthor()&&!!s.launch&&editable(s)&&!!e.synced&&entryEdited(s,e);
+const isEdited=p=>!db.liveContent[p]||JSON.stringify(db.liveContent[p])!==JSON.stringify(content(p));
+
+/* membership */
+const entryFor=(s,p)=>s.pages.find(e=>e.path===p)||s.pages.find(e=>p.startsWith(e.path+'/'));
+const snapsOf=p=>db.snapshots.filter(s=>s.state!=='Published'&&(entryFor(s,p)||s.pages.some(e=>e.path.startsWith(p+'/'))));
+const othersWith=(s,p)=>db.snapshots.filter(t=>t.id!==s.id&&t.state!=='Published'&&entryFor(t,p));
+const claimedBy=(p,s)=>db.snapshots.find(t=>t.id!==s.id&&t.exclusive&&t.state!=='Published'&&entryFor(t,p));
+const blockers=p=>snapsOf(p).filter(s=>s.blockDirect);
+function overlapsOf(s){ const out=[]; s.pages.forEach(e=>[e.path].concat(kids(e.path)).forEach(x=>othersWith(s,x).forEach(t=>{ if(!out.some(o=>o.t.id===t.id&&o.p===x)) out.push({t,p:x}); }))); return out; }
+function rows(withNew){
+  const out=[]; const add=(p,type,newIn)=>{ if(!out.find(r=>r.path===p)) out.push({path:p,type,newIn}); };
+  db.pages.forEach(p=>{ add(p.path,p.type); (p.children||[]).forEach(c=>add(c,'page')); });
+  if(withNew) db.snapshots.forEach(sn=>{ if(sn.state==='Published') return; sn.pages.filter(e=>e.isNew).forEach(e=>add(e.path,'page',sn)); });
+  return out.sort((a,b)=>a.path.localeCompare(b.path));
+}
+const newOwner=p=>db.snapshots.find(sn=>sn.state!=='Published'&&sn.pages.some(e=>e.isNew&&e.path===p));
+const pathTakenBy=path=>{ if(rows(false).some(r=>r.path===path)||db.pages.some(x=>x.path===path)) return true; return db.snapshots.find(sn=>sn.state!=='Published'&&sn.pages.some(e=>e.path===path))||null; };
+function kids(p){ const pg=db.pages.find(x=>x.path===p); return pg&&pg.children||[]; }
+const isFolder=p=>{const f=db.pages.find(y=>y.path===p);return !!(f&&f.type==='folder');};
+
+/* status */
+function counts(s){const c={approved:0,needs:0,not:0};s.pages.forEach(p=>{if(p.review==='Approved')c.approved++;else if(p.review==='Needs changes')c.needs++;else c.not++;});return c;}
+function nextStep(s){
+  if(s.state==='Published') return {text:'Published '+fmt(s.publishedAt||s.scheduledFor)};
+  if(s.state==='Draft'&&s.locked) return {text:'Unlock to make changes',act:'unlock',btn:'Unlock'};
+  if(s.state==='Draft') return s.pages.length?{text:'Request review',long:'Ask '+stepNames(WORKFLOWS['Request publish'].steps[0].approvers)+' to review '+s.pages.length+' page'+(s.pages.length>1?'s':''),act:'reqReview',btn:'Request review'}:{text:'Add pages',act:'addPages',btn:'Add pages'};
+  const c=counts(s);
+  if(c.needs) return {text:'Fix pages and send back',act:'sendBack',btn:'Send back for review'};
+  if(c.not){ const st=s.steps&&s.steps[s.step]; return {text:st?`Waiting on ${st.title} (${stepNames(st.approvers)})${s.steps.length>1?' · step '+(s.step+1)+' of '+s.steps.length:''}`:'Waiting on reviewers'}; }
+  return {text:s.scheduledFor?'Approved · publishes '+fmt(s.scheduledFor):'Approved · ready to publish',act:'publishNow',btn:'Publish now'};
+}
+const stateChip=st=>chip(st,st==='Draft'?'gray':st==='In review'?'amber':'green');
+const pgChip=st=>chip(st,st==='Up to date'?'green':'amber');
+const rvChip=st=>chip(st,st==='Approved'?'green':st==='Needs changes'?'red':'gray');
+function waitingList(){
+  if(isRev()) return db.snapshots.filter(s=>s.state==='In review'&&canApprove(meId(),s)&&s.pages.some(p=>p.review==='Not reviewed'));
+  if(S.role==='author') return db.snapshots.filter(s=>s.state==='In review'&&(s.pages.some(p=>p.review==='Needs changes')||s.pages.every(p=>p.review==='Approved')));
+  return db.snapshots.filter(s=>s.state==='In review'&&(s.watchers||[]).includes('sam'));
+}
+function addComment(snapId,page,kind,text){ db.comments.push({snap:snapId,page,author:ROLES[S.role].user,kind,text,when:'Just now',behalf:isRev()?viaGroup(meId(),snap(snapId)):null}); }
+function pageCard(label,c,o){
+  if(!c) return `<div class="pg"><div class="hd">${label}</div><div class="in mute" style="padding:30px;text-align:center">Not published</div></div>`;
+  const df=k=>o&&o[k]!==c[k]?'diff':'';
+  return `<div class="pg"><div class="hd">${label}</div><div class="in"><h3 class="${df('headline')}">${esc(c.headline)}</h3><div class="img im${Math.max(0,IMGS.indexOf(c.img))} ${df('img')}">${esc(c.img)}</div><p class="${df('body')}">${esc(c.body)}</p>${c.blocks.map((b,i)=>{const ob=o&&o.blocks[i];return `<div class="pb2 ${o&&(!ob||ob.id!==b.id||ob.t!==b.t)?'diff':''}">${esc(b.t)}</div>`;}).join('')}</div></div>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  document.getElementById('demo').innerHTML=`<b>Demo</b><span>View</span><span class="seg"><button class="${idea()?'':'on'}" data-act="mode" data-m="today" ${isAuthor()?'':'disabled'}>Today</button><button class="${idea()?'on':''}" data-act="mode" data-m="idea">Idea</button></span>
+   <span>As</span><select onchange="setRole(this.value)">${Object.entries(ROLES).map(([k,r])=>`<option value="${k}" ${S.role===k?'selected':''}>${r.label} (${uname(r.user)})</option>`).join('')}</select>
+   <span>Go to</span><span class="seg">${[['browse','Browse'],['editor','Editor'],['snapshots','Snapshots']].map(([k,l])=>`<button class="${S.screen===k||(k==='snapshots'&&(S.screen==='snapshot'||S.screen==='review'))?'on':''}" data-act="go" data-s="${k}">${l}</button>`).join('')}</span>
+   <button data-act="ff" title="Jump to the scheduled time">Skip to go-live</button><span class="sp"></span><button data-act="reset">Reset</button><span>Fictional data · ideas to react to, not a spec</span>`;
+  document.getElementById('side').innerHTML=`<div class="logo">A</div><button class="ic ${S.screen==='browse'?'on':''}" data-act="go" data-s="browse" title="Browse">⌂</button><button class="ic ${['snapshots','snapshot','review'].includes(S.screen)?'on':''}" data-act="go" data-s="snapshots" title="Apps">▦</button>`;
+  document.getElementById('top').innerHTML=topHtml();
+  document.getElementById('main').innerHTML=S.screen==='browse'?browse():S.screen==='editor'?editor():S.screen==='snapshots'?snapshotsApp():S.screen==='snapshot'?snapshotDetail():reviewView();
+  document.getElementById('modal').innerHTML=S.modal?modalHtml():'';
+  S.sig=sigOf();
+}
+function topHtml(){
+  const e=S.screen==='editor';
+  const crumb=S.screen==='snapshots'?'<b>Snapshots</b>':S.screen==='snapshot'&&snap(S.snapId)?`<button class="link" data-act="go" data-s="snapshots" style="font-weight:500">Snapshots</button> › <b>${esc(snap(S.snapId).title)}</b>`:S.screen==='review'&&snap(S.snapId)?`<button class="link" data-act="go" data-s="snapshots" style="font-weight:500">Snapshots</button> › ${esc(snap(S.snapId).title)} › <b>Review</b>`:`${DATA.org} › ${DATA.site}${e?' › <b>'+esc(S.path.slice(1).replace(/\//g,' › '))+'</b>':''}`;
+  return `<div class="crumb">${crumb}</div><div style="display:flex;gap:12px;align-items:center">${idea()?bellHtml():''}${e&&idea()?schedChip():''}${e&&idea()&&isAuthor()?edAddBtn():''}${e&&idea()?inBadge():''}${e?edMore():''}${e?`<span class="rel"><button class="btn pri" data-act="send">Send</button>${S.sendOpen?sendPanel():''}</span>`:''}</div>`;
+}
+const sigOf=()=>S.screen==='editor'?snapsOf(S.path).map(s=>s.id+pageChanged(s,S.path)+snapEdited(s,S.path)).join():'';
+function refreshChrome(){ document.getElementById('top').innerHTML=topHtml(); const eb=document.getElementById('esb'); if(eb) eb.innerHTML=S.editSnap&&snap(S.editSnap)?editSnapBanner():''; const r=document.getElementById('railbody'); if(r) r.innerHTML=railBody(); S.sig=sigOf(); }
+
+/* browse */
+function browse(){
+  const sel=S.sel.size, can=!idea()||isAuthor();
+  const match={'All':()=>true,
+    'Waiting on me':r=>waitingList().some(s=>entryFor(s,r.path)||s.pages.some(e=>e.path.startsWith(r.path+'/'))),
+    'Scheduled':r=>snapsOf(r.path).some(s=>s.scheduledFor)||!!pageSchedFor(r.path),
+    'My requests':r=>snapsOf(r.path).some(s=>s.state==='In review'),
+    'Past due':r=>snapsOf(r.path).some(overdue)||(!!pageSchedFor(r.path)&&new Date(pageSchedFor(r.path))<NOW())};
+  const pagesOnly=rows(idea()&&S.newView!=='hidden').filter(r=>r.type==='page'); const cnt=f=>pagesOnly.filter(match[f]).length;
+  const list=rows(idea()&&S.newView!=='hidden').filter(idea()?match[S.filter]:()=>true);
+  const body=list.map(r=>{const d=r.path.split('/').length-2; const sn=snapsOf(r.path);
+    const badges=r.newIn?chip('Only in '+r.newIn.title,'blue')+(r.newIn.scheduledFor?chip('Scheduled '+fmt(r.newIn.scheduledFor).split(',')[0],'purple'):''):idea()&&sn.length?(sn.filter(x=>!x.single).length?chip(`In ${sn.filter(x=>!x.single).length} snapshot${sn.filter(x=>!x.single).length>1?'s':''}`,'blue'):'')+(sn.some(s=>s.scheduledFor)?chip('Scheduled '+fmt(sn.find(s=>s.scheduledFor).scheduledFor).split(',')[0],'purple'):'')+(sn.some(overdue)?chip('Past due','red'):'')+(sn.some(s=>s.state==='In review')?chip('Review requested','amber'):'')+(blockers(r.path).length?chip('🔒 Direct publish blocked','amber'):''):(idea()&&db.live[r.path]?chip('Published','green'):'');
+    const pschedBadge=(idea()&&pageSchedFor(r.path))?chip('Scheduled '+fmt(pageSchedFor(r.path)).split(',')[0],'purple')+(new Date(pageSchedFor(r.path))<NOW()?chip('Past due','red'):''):'';
+    return `<tr class="${S.sel.has(r.path)?'sel':''}" ${r.newIn?'style="opacity:.62" title="This page exists only in the snapshot until it publishes"':''}>${can?`<td style="width:40px"><input type="checkbox" data-act="pick" data-p="${r.path}" ${S.sel.has(r.path)?'checked':''} ${r.newIn?'disabled':''}></td>`:'<td style="width:16px"></td>'}
+     <td style="padding-left:${16+d*20}px">${r.type==='folder'?'📁':'📄'} <span class="nm" ${r.type==='page'?`data-act="openPage" data-p="${r.path}"`:''}>${esc(r.path.split('/').pop())}</span> ${badges}${pschedBadge}</td><td>${r.type==='folder'?'Folder':'Page'}</td><td class="mute">${r.newIn?'New':(MOD[r.path]||'')}</td><td style="width:40px">☆</td></tr>`;}).join('')||'<tr><td colspan="5" class="mute" style="text-align:center;padding:30px">Nothing here.</td></tr>';
+  const acts=['✨ Ask Coworker','Rename','☆ Favorite','Copy','Cut','Delete','Preview'];
+  return `${idea()?roleStrip():''}<div class="tools"><span>Group by type</span><span>Show All</span><span>Sort</span><span>Appearance</span><span>Site Settings</span>${can?'<button class="btn pri sm" data-act="later">New ▾</button>':''}</div>
+  ${idea()?`<div class="chips">${['All','Waiting on me'].concat(isAuthor()?['My requests']:[]).concat(['Scheduled','Past due']).map(f=>`<button class="f ${S.filter===f?'on':''} ${f==='Past due'&&cnt(f)>0?'warn':''}" data-act="filter" data-f="${f}">${f} (${cnt(f)})</button>`).join('')}</div>`:''}
+  <table><thead><tr><th></th><th>Name</th><th>Type</th><th>Modified</th><th></th></tr></thead><tbody>${body}</tbody></table><div style="height:90px"></div>
+  ${sel&&can?`<div class="batch"><button data-act="clearSel">✕</button><b>${sel} item${sel>1?'s':''} selected</b><span class="sp"></span>
+   ${acts.map(a=>`<button data-act="later">${a}</button>`).join('')}
+   ${idea()?`<span class="rel"><button data-act="addMenu">Add to snapshot ▾</button>${S.menu==='add'?addMenu():''}</span>`:''}
+   <button data-act="later" ${idea()&&[...S.sel].some(x=>blockers(x).length)?'disabled title="Blocked by a snapshot"':''}>Publish</button><button data-act="later">Share</button></div>`:''}`;
+}
+function roleStrip(){
+  const w=waitingList(); if(!w.length) return '';
+  const s=w[0];
+  if(isRev()) return `<div class="note n-blue" style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>✉️ <b>${esc(s.title)}</b> is waiting on you. ${s.pages.filter(p=>p.review==='Not reviewed').length} pages to review.</span><button class="btn pri sm" data-act="openReview" data-id="${s.id}">Open review</button></div>`;
+  if(S.role==='watcher') return `<div class="note n-blue" style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>🔔 You were added as a watcher on <b>${esc(s.title)}</b>. You can read and reply, not approve.</span><button class="btn sm" data-act="openSnap" data-id="${s.id}">Open snapshot</button></div>`;
+  return `<div class="note n-amber" style="margin:12px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span><b>${esc(s.title)}</b> ${counts(s).needs?'has pages that need changes.':'is approved and ready to publish.'}</span><button class="btn sm" data-act="openSnap" data-id="${s.id}">Open snapshot</button></div>`;
+}
+function addMenu(){
+  const hasFolder=[...S.sel].some(isFolder);
+  const pgs=[...S.sel].filter(x=>!isFolder(x));
+  const shared=pgs.filter(x=>snapsOf(x).length), held=pgs.filter(x=>db.snapshots.some(t=>t.exclusive&&t.state!=='Published'&&entryFor(t,x)));
+  const warn=(shared.length||held.length)?`<div class="note n-amber small" style="margin:4px;white-space:normal;max-width:300px">${shared.length?`⚠️ ${shared.length} selected page${shared.length>1?'s are':' is'} already in another snapshot. You can still add ${shared.length>1?'them':'it'}; you'll see a heads-up.`:''}${held.length?`<br>🔒 ${held.length} page${held.length>1?'s are':' is'} held by a snapshot and can't be added elsewhere.`:''}</div><hr>`:'';
+  return `<div class="menu" style="bottom:36px;right:0;max-width:330px">${warn}${hasFolder?`<label style="display:block;padding:6px 12px;font-size:13px;cursor:pointer"><input type="checkbox" data-act="toggleEdited" ${S.onlyEdited?'checked':''}> Only pages edited since last published</label><hr>`:''}${db.snapshots.filter(s=>s.state!=='Published'&&!s.single).map(s=>`<button data-act="addTo" data-id="${s.id}" ${s.state!=='Draft'||(pgs.length&&pgs.every(x=>entryFor(s,x)))?'disabled':''}>${esc(s.title)} <span class="mute small">· ${pgs.length&&pgs.every(x=>entryFor(s,x))?'already added':s.state}</span></button>`).join('')}<hr><button data-act="newIn">+ New snapshot…</button></div>`;
+}
+
+/* editor */
+function schedSources(p){ const out=[]; const ps=pageSchedFor(p); if(ps) out.push({kind:'page',iso:ps,label:'On its own'});
+  db.snapshots.filter(x=>x.state!=='Published'&&x.scheduledFor&&entryFor(x,p)).forEach(x=>out.push({kind:'snap',iso:x.scheduledFor,label:x.single?'Publish request':x.title,id:x.id,single:!!x.single}));
+  return out.sort((a,b)=>new Date(a.iso)-new Date(b.iso)); }
+function schedChip(){ const src=schedSources(S.path); if(!src.length) return ''; const late=new Date(src[0].iso)<NOW();
+  return `<span class="chip c-${late?'red':'purple'}" style="font-size:13px" title="${src.map(x=>esc(x.label)+': '+fmt(x.iso)).join(' · ')}">🗓 ${late?'Past due':'Scheduled'} ${fmt(src[0].iso).split(',')[0]}</span>`; }
+function schedBanner(p){ const src=schedSources(p); if(!src.length) return ''; const late=src.some(x=>new Date(x.iso)<NOW());
+  return `<div class="note ${late?'n-amber':'n-blue'}">🗓 <b>${late?'Past due':'Scheduled to publish'}</b>${src.map(x=>`<div class="small" style="margin-top:3px">${esc(x.label)} · ${new Date(x.iso)<NOW()?'was due':'publishes'} ${fmt(x.iso)} ${x.kind==='page'&&isAuthor()?'<button class="link small" data-act="pageSchedOpen">Change</button> <button class="link small" data-act="clearPageSched">Cancel</button>':x.kind==='snap'&&!x.single?'<button class="link small" data-act="openSnap" data-id="'+x.id+'">Open snapshot</button>':''}</div>`).join('')}</div>`; }
+function edMore(){ const p=S.path, sch=pageSchedFor(p), au=isAuthor(); let items=[];
+  if(!idea()) items=[['Unpublish','later'],['Schedule Publish','pageSchedOpen'],['Multi-site Manager','later'],['Send to Adobe Target','later']];
+  else { const bl=blockers(p), pend=pendingFor(p);
+    if(au&&sch){ items.push(['Change schedule…','pageSchedOpen'],['Cancel schedule','clearPageSched']); }
+    else if(au&&!bl.length&&!pend.length&&!newOwner(p)) items.push(['Schedule publish…','pageSchedOpen']);
+    if(au&&db.live[p]) items.push(['Unpublish','later']); }
+  if(!items.length) return '';
+  return `<span class="rel"><button class="btn sm" data-act="edMore" title="More">⋯</button>${S.menu==='edmore'?`<div class="menu" style="top:30px;right:0">${items.map(i=>`<button data-act="${i[1]}">${i[0]}</button>`).join('')}</div>`:''}</span>`; }
+function scheduleBlock(){ const p=S.path, sch=pageSchedFor(p); if(!sch) return '';
+  return `<div class="note n-blue">🗓 <b>Scheduled</b> · publishes ${fmt(sch)}${new Date(sch)<NOW()?' '+chip('Past due','red'):''}<div style="margin-top:6px"><button class="btn sm" data-act="pageSchedOpen">Change</button> <button class="btn sm" data-act="clearPageSched">Cancel schedule</button></div></div>`; }
+function edAddBtn(){
+  return `<span class="rel"><button class="btn sm" data-act="edAdd">Add to snapshot ▾</button>${S.menu==='edadd'?`<div class="menu" style="top:30px;right:0">${db.snapshots.filter(s=>s.state!=='Published'&&!s.single&&!entryFor(s,S.path)).map(s=>`<button data-act="edAddTo" data-id="${s.id}" ${s.state!=='Draft'?'disabled':''}>${esc(s.title)} <span class="mute small">· ${s.state}</span></button>`).join('')}<hr><button data-act="edNew">+ New snapshot…</button></div>`:''}</span>`;
+}
+function inBadge(){
+  const sn=snapsOf(S.path).filter(x=>!x.single);
+  if(!sn.length) return '';
+  return `<span class="rel"><button class="chip c-blue" style="border:0;cursor:pointer;font-size:13px" data-act="badge">In ${sn.length} snapshot${sn.length>1?'s':''} ▾</button>${S.menu==='badge'?`<div class="menu" style="top:30px;right:0">${sn.map(s=>`<button data-act="openSnap" data-id="${s.id}">${esc(s.title)} <span class="mute small">· ${s.state}${s.scheduledFor?', publishes '+fmt(s.scheduledFor):''}</span></button>`).join('')}</div>`:''}</span>`;
+}
+const canPublishEarly=p=>{ const bl=blockers(p); return bl.length>0&&bl.every(b=>(b.earlyAllowed||[]).includes(meId())); };
+const snapDiffers=p=>snapsOf(p).filter(x=>!x.single&&(pageChanged(x,p)||snapEdited(x,p)));
+function pageStateChips(p){ const sn=snapsOf(p).filter(x=>!x.single), src=schedSources(p), pend=pendingFor(p); let h='';
+  if(sn.length) h+=sn.length<=2?sn.map(x=>chip('In snapshot: '+x.title,'gray')).join(''):chip('In '+sn.length+' snapshots','gray');
+  if(src.length){ const late=new Date(src[0].iso)<NOW(); h+=chip((late?'Past due ':'Scheduled ')+fmt(src[0].iso).split(',')[0],late?'red':'purple'); }
+  if(pend.length) h+=chip('Review requested','amber');
+  return h; }
+function sendPanel(){
+  const p=S.path, bl=blockers(p), nw=newOwner(p), gated=idea()&&(bl.length>0||!!nw), pub=S.sendTarget==='publish'&&!gated;
+  const diff=idea()?snapDiffers(p):[], owner=nw||bl[0]||null, target=[].concat(bl,nw?[nw]:[]).find(x=>x.state==='Draft');
+  const chips=idea()?pageStateChips(p):'';
+  const early=gated&&blockers(p).length>0&&canPublishEarly(p), whoEarly=[...new Set(blockers(p).flatMap(b=>b.earlyAllowed||[]))].map(i=>uname(i)).join(', ');
+  const pubCard=gated?`<div class="card2" style="opacity:.6"><b>Preview &amp; Publish</b><div class="small mute">Not available: ${nw?"this page isn't live yet":'page is in a snapshot'}</div>${owner?`<div class="small mute">${esc(owner.title)}</div>`:''}${blockers(p).length&&whoEarly&&!early?`<div class="small mute">Only ${esc(whoEarly)} can publish early.</div>`:''}${early?`<div class="small mute">You can publish early. It is recorded.</div>`:''}</div>`
+    :`<div class="card2 ${pub?'on':''}" data-act="sendTarget" data-t="publish" style="cursor:pointer"><b>Preview &amp; Publish</b><div class="small mute">Last published Nov 1, 10:00</div></div>`;
+  const mainBtn=gated?(early?`<button class="btn bad" style="width:100%" data-act="publishEarlyAsk">Publish early…</button>`:isAuthor()&&target?`<button class="btn pri" style="width:100%" data-act="sendReqSnap" data-id="${target.id}">Request review</button>`:`<button class="btn pri" style="width:100%" disabled>${pendingFor(p).length?'Review requested':'Not available'}</button>`)
+    :`<button class="btn pri" style="width:100%" data-act="later">Update</button>`;
+  return `<div class="pop" style="top:38px;right:0"><div class="card2 ${S.sendTarget==='preview'||gated?'on':''}" data-act="sendTarget" data-t="preview" style="cursor:pointer"><b>Preview</b><div class="small mute">Last updated Nov 11, 10:12</div></div>
+   ${pubCard}
+   ${chips?`<div style="margin:0 0 8px">${chips}</div>`:''}
+   ${diff.length?`<div style="margin:0 0 10px"><span class="chip" style="font-size:13px;background:#f5a623;color:#fff">Heads-up: snapshot differs from current</span> <button class="link small" data-act="viewChanges" data-id="${diff[0].id}">Compare</button></div>`:''}
+   ${idea()&&isAuthor()?requestBlock():''}
+   ${idea()&&isAuthor()?scheduleBlock():''}
+   ${mainBtn}</div>`;
+}
+function requestBlock(){ const p=S.path, pend=pendingFor(p);
+  if(pend.length) return `<div class="note n-blue">${pend.map(sn=>`<div><b>Review requested</b> · ${esc(sn.title)}<div class="small mute">${esc(reqStatus(sn))}</div><div style="margin-top:6px">${isAuthor()&&entryFor(sn,p).review==='Needs changes'?`<button class="btn sm pri" data-act="railSendBack" data-sid="${sn.id}" data-p="${entryFor(sn,p).path}">Send back for review</button> `:'<button class="btn sm" data-act="resend">Resend notification</button> '}${sn.single?`<button class="btn sm" data-act="withdrawReq" data-id="${sn.id}">Withdraw request</button>`:`<button class="btn sm" data-act="openSnap" data-id="${sn.id}">Open snapshot</button>`}</div></div>`).join('')}</div>`;
+  if(blockers(p).length||newOwner(p)) return '';
+  return `<button class="btn" style="width:100%;margin-bottom:8px" data-act="reqPage">Request review…</button>`; }
+function editor(){
+  const p=S.path,c=cur();
+  const tabs=['Content','Outline','Versions','Comments'].concat(idea()?['Review']:[]);
+  return `<div style="display:grid;grid-template-columns:1fr 330px;min-height:600px"><div class="canvas"><div class="sitebar"><b>WKND</b><span>Trips · Learn · Start here</span></div>${idea()&&newOwner(p)?`<div class="note n-amber">🆕 <b>New page in ${esc(newOwner(p).title)}.</b> It isn't on the live site yet.</div>`:''}${idea()?schedBanner(p):''}<div id="esb">${S.editSnap&&snap(S.editSnap)?editSnapBanner():''}</div><div class="hint">Click any text to edit it. Changes show up in Versions.</div>
+   <div class="herobox im${Math.max(0,IMGS.indexOf(c.img))}"><button class="btn sm" style="background:#fff" data-act="swapImg">Swap image</button><span class="small">${esc(c.img)}</span></div>
+   <h2 class="ed" contenteditable="true" data-edit="headline">${esc(c.headline)}</h2><p class="ed" contenteditable="true" data-edit="body">${esc(c.body)}</p>
+   ${c.blocks.map((b,i)=>`<div class="blk2"><span class="ed" contenteditable="true" data-edit="block" data-bid="${b.id}">${esc(b.t)}</span><span class="ctl"><button data-act="mv" data-i="${i}" data-d="-1" title="Move up">↑</button><button data-act="mv" data-i="${i}" data-d="1" title="Move down">↓</button><button data-act="rmBlock" data-i="${i}" title="Remove">✕</button></span></div>`).join('')}
+   <button class="btn sm" data-act="addBlock">+ Add block</button></div>
+   <div class="rail"><div class="rtabs">${tabs.map(t=>`<button class="rt ${S.tab===t?'on':''}" data-act="tab" data-t="${t}">${t}${t==='Review'&&pendingFor(p).length?' ('+pendingFor(p).length+')':''}</button>`).join('')}<span class="rel" style="margin-left:auto"><button class="rt" data-act="panels">Panels ▾</button>${S.panels?panelsMenu():''}</span></div><div class="rbody" id="railbody">${railBody()}</div></div></div>`;
+}
+function editSnapBanner(){ const s=snap(S.editSnap), e=entryFor(s,S.path);
+  return `<div class="note n-amber">✏️ Editing the <b>snapshot version</b> in <b>${esc(s.title)}</b>. The main page doesn't change until you promote it.<div style="margin-top:6px"><button class="btn sm" data-act="backMain">Back to main page</button> ${e&&canPromote(s,e)?`<button class="btn pri sm" data-act="promoteOne" data-sid="${s.id}" data-p="${e.path}">Promote to main</button>`:''}</div></div>`; }
+function panelsMenu(){
+  const grp=(h,items)=>`<div class="small mute" style="padding:6px 12px 2px;font-weight:700">${h}</div>${items.map(i=>`<button data-act="${i[1]||'later'}">${i[0]}</button>`).join('')}`;
+  return `<div class="menu" style="top:30px;right:0">${grp('Editor',[['Outline'],['Page'],['Content'],['Versions'],['Comments']].concat(idea()?[['Review','tabReview']]:[]).concat([['Preflight']]))}<hr>${grp('Library',[['Blocks'],['Icons'],['Templates'],['AEM Assets']])}<hr>${grp('Extensions',[['Media Library'],['Generate Variations'],['Fragment Picker'],['Tagger'],['Snapshots ↗','openApp'],['Request Publish','reqPanel'],['Rollout'],['Developer']])}</div>`;
+}
+const MNAMES=()=>DATA.users.map(u=>u.name);
+function mentionHtml(t){ const names=MNAMES().sort((a,b)=>b.length-a.length).map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'); return esc(t).replace(new RegExp('@('+names+')(?![A-Za-z])','g'),'<span class="mention">@$1</span>'); }
+const mentionsIn=t=>MNAMES().filter(n=>new RegExp('@'+n+'(?![A-Za-z])').test(t));
+const notifyM=t=>{const m=mentionsIn(t); return m.length?' · '+m.join(', ')+' notified':'';};
+let mta=null;
+function mentionPop(ta){ const pop=document.getElementById('mpop'); const m=/@([A-Za-z]*)$/.exec(ta.value.slice(0,ta.selectionStart)); if(!m){ pop.style.display='none'; return; }
+  const q=m[1].toLowerCase(), list=MNAMES().filter(n=>n.toLowerCase().startsWith(q)); if(!list.length){ pop.style.display='none'; return; }
+  mta=ta; const r=ta.getBoundingClientRect(); pop.style.cssText='display:block;position:fixed;left:'+r.left+'px;top:'+(r.bottom+4)+'px;z-index:100;min-width:200px';
+  pop.innerHTML=list.map(n=>`<button onmousedown="event.preventDefault();pickMention('${n}')">@${n}</button>`).join(''); }
+function pickMention(n){ const ta=mta; if(!ta) return; const pos=ta.selectionStart; const before=ta.value.slice(0,pos).replace(/@[A-Za-z]*$/,'@'+n+' '); ta.value=before+ta.value.slice(pos); ta.setSelectionRange(before.length,before.length); ta.focus(); document.getElementById('mpop').style.display='none'; }
+function archiveReq(sn){ db.archive.push({id:sn.id,title:sn.title,paths:sn.pages.map(e=>e.path)}); }
+const myNames=()=>{const me=meId(); return [uname(me)].concat(DATA.users.filter(u=>u.role==='group'&&(u.members||[]).includes(me)).map(u=>u.name));};
+function inboxItems(){ const me=meId(), out=[];
+  if(isRev()) db.snapshots.filter(sn=>sn.state==='In review'&&canApprove(me,sn)&&sn.pages.some(p=>p.review==='Not reviewed')).forEach(sn=>{ const st=sn.steps&&sn.steps[sn.step]; out.push({key:`${me}:task:${sn.id}:${sn.step}`,sec:'Waiting on me',title:'Review '+sn.title,sub:(st?st.title+' · ':'')+sn.pages.filter(p=>p.review==='Not reviewed').length+' page'+(sn.pages.filter(p=>p.review==='Not reviewed').length>1?'s':'')+' to review',snap:sn.id,kind:'task'}); });
+  if(isAuthor()) db.snapshots.filter(sn=>sn.state==='In review'&&counts(sn).needs>0).forEach(sn=>{ const rej=db.comments.filter(c=>c.snap===sn.id&&c.kind==='reject-reason').slice(-1)[0]; out.push({key:`${me}:chg:${sn.id}`,sec:'Changes requested',title:'Changes requested on '+sn.title,sub:rej?rej.text:'',snap:sn.id,kind:'snap'}); });
+  if(isAuthor()) db.snapshots.filter(sn=>sn.state==='In review'&&counts(sn).needs===0&&counts(sn).not===0).forEach(sn=>out.push({key:`${me}:ready:${sn.id}`,sec:'Waiting on me',title:sn.title+' is ready to publish',sub:sn.scheduledFor?(overdue(sn)?'Was due '+fmt(sn.scheduledFor):'Publishes '+fmt(sn.scheduledFor)):'Approved by all reviewers',snap:sn.id,kind:'snap'}));
+  db.comments.forEach((c,i)=>{ if(c.author===me||c.done) return; if(!mentionsIn(c.text).some(n=>myNames().includes(n))) return; const sx=snap(c.snap)||db.archive.find(a=>a.id===c.snap); out.push({key:`${me}:m:${i}`,sec:'Mentions',title:uname(c.author)+' mentioned you'+(sx?' in '+sx.title:''),sub:c.text,c,kind:'mention'}); });
+  if(isAuthor()) db.snapshots.filter(sn=>sn.state==='In review'&&counts(sn).needs===0&&counts(sn).not>0).forEach(sn=>out.push({key:`${me}:req:${sn.id}:${sn.step}:${counts(sn).needs>0}`,sec:'My requests',title:sn.title,sub:reqStatus(sn),snap:sn.id,kind:'snap'}));
+  if(S.role==='watcher') db.snapshots.filter(sn=>sn.state==='In review'&&(sn.watchers||[]).includes(me)).forEach(sn=>out.push({key:`${me}:fol:${sn.id}:${sn.step}`,sec:'Following',title:sn.title,sub:reqStatus(sn),snap:sn.id,kind:'snap'}));
+  return out; }
+function bellHtml(){ const items=inboxItems(), unread=items.filter(i=>!S.inboxRead.has(i.key)).length;
+  const secs=['Waiting on me','Changes requested','Mentions','My requests','Following'];
+  const pop=S.inbox?`<div class="inbox"><div class="hd2"><b>Inbox</b><button class="link small" data-act="inboxReadAll">Mark all read</button></div>${secs.map(sec=>{const its=items.filter(i=>i.sec===sec); return its.length?`<div class="sec">${sec}</div>${its.map(i=>`<button class="ib" data-act="inboxOpen" data-k="${esc(i.key)}"><div class="t">${S.inboxRead.has(i.key)?'':'<span class="dot"></span>'}${esc(i.title)}</div><div class="s">${mentionHtml(i.sub.length>110?i.sub.slice(0,107)+'…':i.sub)}</div></button>`).join('')}`:'';}).join('')||'<div class="mute small" style="padding:18px 16px">Nothing needs your attention.</div>'}</div>`:'';
+  return `<span class="rel"><button class="bell" data-act="inbox" title="Inbox">🔔${unread?`<span class="bdg">${unread}</span>`:''}</button>${pop}</span>`; }
+function cmHtml(c){ if(c.done) return `<div class="cm" style="background:#f6f6f6;padding:6px 12px"><span class="small mute">✓ ${esc(uname(c.author))}: ${esc(c.text.length>60?c.text.slice(0,57)+'…':c.text)} · ${c.done.kind==='done'?'Done':'Resolved'} by ${esc(c.done.by)}</span> <button class="link small" data-act="cmReopen" data-i="${db.comments.indexOf(c)}">Reopen</button></div>`; return `<div class="cm"><div class="who">${esc(uname(c.author))}${c.behalf?' <span class="mute small" style="font-weight:400">for '+esc(c.behalf)+'</span>':''} ${c.kind==='request-note'?chip('Request note','blue'):c.kind==='reject-reason'?chip('Changes requested','red'):c.kind==='early-publish'?chip('Published early','amber'):''} <span class="small mute" style="font-weight:400">${c.page?esc(title(c.page)):(()=>{const sx=db.snapshots.find(x=>x.id===c.snap), ar=db.archive.find(x=>x.id===c.snap); const one=sx&&sx.single?sx.pages[0].path:(ar&&ar.id.indexOf('req-')===0?ar.paths[0]:null); return one?esc(title(one)):'All pages';})()} · ${esc(c.when)}</span></div>${mentionHtml(c.text)}<div style="margin-top:4px"><button class="link small" data-act="cmDone" data-i="${db.comments.indexOf(c)}">${c.author!==meId()&&mentionsIn(c.text).some(n=>myNames().includes(n))?'Mark as done':'Resolve'}</button></div></div>`; }
+function reviewTab(){
+  const p=S.path, pend=pendingFor(p);
+  if(!pend.length) return `<div class="mute small">No review requested for this page.</div>${isAuthor()?'<button class="btn" style="margin-top:10px" data-act="reqPage">Request review…</button>':''}`;
+  return pend.map(sn=>{ const e=entryFor(sn,p), canAct=isRev()&&canApprove(meId(),sn)&&e.review==='Not reviewed';
+    const rej=db.comments.filter(c=>c.snap===sn.id&&c.kind==='reject-reason'&&(c.page===e.path||c.page===p)).slice(-1)[0];
+    const last=!sn.steps||sn.step>=sn.steps.length-1;
+    const reasonOpen=S.railReason&&S.railReason.sid===sn.id;
+    return `<div class="card" style="padding:12px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><b>${esc(sn.title)}</b>${rvChip(e.review)}</div>
+     <div class="small mute" style="margin-top:2px">${esc(reqStatus(sn))}</div>${stepsHtml(sn)}
+     ${e.review==='Needs changes'&&rej?cmHtml(rej):''}
+     ${isRev()&&!canApprove(meId(),sn)&&e.review==='Not reviewed'?'<div class="small mute">Awaiting other reviewers</div>':''}
+     ${canAct&&viaGroup(meId(),sn)?`<div class="small mute">Reviewing on behalf of ${esc(viaGroup(meId(),sn))}</div>`:''}
+     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"><button class="btn sm" data-act="railCompare" data-sid="${sn.id}">Compare with live</button>
+      ${canAct&&!reasonOpen?`<button class="btn sm bad" data-act="railReasonOpen" data-sid="${sn.id}" data-p="${e.path}">Request changes</button><button class="btn sm ok" data-act="railApprove" data-sid="${sn.id}" data-p="${e.path}">${sn.single&&last&&!sn.scheduledFor?'Approve &amp; publish':'Approve'}</button>`:''}
+      ${isAuthor()&&e.review==='Needs changes'?`<button class="btn sm pri" data-act="railSendBack" data-sid="${sn.id}" data-p="${e.path}">Send back for review</button>`:''}
+      ${isAuthor()?`${e.review==='Needs changes'?'':'<button class="btn sm" data-act="resend">Resend notification</button>'}${sn.single?`<button class="btn sm" data-act="withdrawReq" data-id="${sn.id}">Withdraw request</button>`:`<button class="btn sm" data-act="openSnap" data-id="${sn.id}">Open snapshot</button>`}`:''}</div>
+     ${reasonOpen?`<div class="lbl">Reason (required)</div><textarea id="rreason" data-mention="1" rows="2" placeholder="${esc(DATA.reviewRequest.rejectReasonExample)}"></textarea><div class="foot" style="margin-top:8px"><button class="btn sm" data-act="railReasonCancel">Cancel</button><button class="btn sm bad" data-act="railRejectSend" data-sid="${sn.id}" data-p="${e.path}">Request changes</button></div>`:''}</div>`; }).join(''); }
+function railBody(){
+  const p=S.path;
+  if(S.tab==='Review'&&idea()) return reviewTab();
+  if(S.tab==='Comments'){
+    if(!idea()) return `<div class="mute small" style="margin-bottom:14px">Select content and press ⌘ ⌥ M to add a comment.</div><div style="text-align:center" class="mute">No comments yet</div>`;
+    const sn=snapsOf(p), cs=db.comments.filter(c=>sn.some(s=>s.id===c.snap)&&(c.page===null||c.page===p||p.startsWith(c.page+'/')));
+    const grp=sn.map(sx=>{const cc=cs.filter(c=>c.snap===sx.id); return `<div class="small mute" style="margin-top:10px;font-weight:700">${esc(sx.title)}</div>${sx.description?`<div class="cm" style="background:#f6f6f6"><div class="who">Snapshot description</div>${esc(sx.description)}</div>`:''}${cc.filter(c=>!c.done).map(cmHtml).join('')}`;}).join('')||'<div class="mute small">No comments yet.</div>';
+    const inP=c=>c.page===null||c.page===p||p.startsWith(c.page+'/');
+    const earlier=[...db.snapshots.filter(x=>x.state==='Published'&&entryFor(x,p)).map(x=>({id:x.id,title:x.title,label:'Published '+fmt(x.publishedAt||x.scheduledFor).split(',')[0],color:'green'})),...db.archive.filter(a=>a.paths.some(q=>q===p||p.startsWith(q+'/'))).map(a=>({id:a.id,title:a.title,label:'Withdrawn',color:'gray'}))].filter(e=>db.comments.some(c=>c.snap===e.id&&inP(c)));
+    const eh=earlier.length?`<div style="margin-top:14px"><button class="link" data-act="toggleEarlier">Earlier requests (${earlier.length}) ${S.earlierOpen?'▴':'▾'}</button>${S.earlierOpen?earlier.map(e=>`<div class="small mute" style="margin-top:8px;font-weight:700">${esc(e.title)} ${chip(e.label,e.color)}</div>${db.comments.filter(c=>c.snap===e.id&&inP(c)).map(cmHtml).join('')}`).join(''):''}</div>`:'';
+    const resolved=cs.filter(c=>c.done); const rh=resolved.length?`<div style="margin-top:14px"><button class="link" data-act="toggleResolved">Resolved (${resolved.length}) ${S.resolvedOpen?'▴':'▾'}</button>${S.resolvedOpen?resolved.map(cmHtml).join(''):''}</div>`:'';
+    return `<div class="mute small" style="margin-bottom:4px">Comments from snapshots this page is in.</div>${grp}${rh}${eh}
+     ${sn.length?`<textarea id="reply" data-mention="1" rows="2" placeholder="Reply, @mention…" style="margin-top:8px"></textarea>${sn.length>1?`<select id="rsnap" style="margin-top:6px">${sn.map(s=>`<option value="${s.id}">${esc(s.title)}</option>`).join('')}</select>`:`<input type="hidden" id="rsnap" value="${sn[0].id}">`}<div style="text-align:right;margin-top:6px"><button class="btn sm pri" data-act="replyEd">Reply</button></div>`:''}`;
+  }
+  if(S.tab==='Outline') return ['Section 1','Section 2','Section 3'].map(s=>`<div class="blk">${s}</div>`).join('');
+  if(S.tab==='Content') return rows().filter(r=>r.type==='page').map(r=>`<div style="padding:5px 4px;${r.path===p?'color:var(--blue);font-weight:700':''}">📄 ${esc(r.path.slice(1))}</div>`).join('');
+  const hist=`<div class="it"><b>Current</b></div>${[['Nov 11, 2026, 10:12 AM','1 change'],['Nov 3, 2026, 3:30 PM',''],['Nov 1, 2026, 10:00 AM','']].map(([d,c])=>`<div class="it"><b>Previewed</b><div class="small mute">${d} · Alex</div>${c?`<div class="small mute">${c}</div>`:''}</div>`).join('')}`;
+  if(!idea()) return `<div class="small mute" style="margin-bottom:10px">Press ⌘ ⌥ S to add to version history while editing.</div><div class="tl">${hist}</div>`;
+  const sn=snapsOf(p); const changed=sn.filter(s=>pageChanged(s,p));
+  const banners=changed.map(s=>`<div class="note n-amber">✏️ Edited after it was added to <b>${esc(s.title)}</b>.<div style="margin-top:6px"><button class="btn sm" data-act="viewChanges" data-id="${s.id}">View changes</button> ${s.state==='Draft'&&isAuthor()?`<button class="btn pri sm" data-act="updateSnap" data-id="${s.id}">Overwrite</button>`:'<span class="small mute">The snapshot is locked while in review, so its copy stays as it was.</span>'}</div></div>`).join('');
+  const live=db.live[p]?`<div class="it"><b>Live</b><div class="small mute">Published ${fmt(db.live[p]).split(',')[0]}${db.ver[p]?' · v'+db.ver[p]:''}</div>${(()=>{const e=db.early.filter(x=>x.path===p).slice(-1)[0]; return e&&e.when===db.live[p]?`<div style="margin-top:2px">${chip('Published early','amber')}</div><div class="small mute">${esc(e.by)}: ${esc(e.reason)}</div>`:'';})()}${db.liveVia[p]&&snap(db.liveVia[p])?`<button class="link small" data-act="openSnap" data-id="${db.liveVia[p]}">View publish record</button>`:''}</div>`:'';
+  const snaps=sn.map(s=>`<div class="it"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><b>${esc(s.title)}</b><div class="small mute">${s.single?'Publish request':'Snapshot'} · ${s.state}${s.steps&&s.state==='In review'?' · '+s.steps[s.step].title:''}${s.scheduledFor?'':' · added '+fmtD(s.createdAt)}</div></div>${chip(s.single?'Request':'Snapshot','gray')}</div>${s.blockDirect?'<div>'+chip('🔒 Direct publish blocked','amber')+'</div>':''}${pageChanged(s,p)||snapEdited(s,p)?'<div style="margin-top:2px">'+(pageChanged(s,p)?chip('Update available','amber'):'')+(snapEdited(s,p)?chip('Overridden','purple'):'')+'</div>':''}<button class="link small" data-act="viewChanges" data-id="${s.id}">Compare</button></div>${s.scheduledFor?`<div class="it"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><b>Scheduled</b><div class="small mute">Publishes ${fmt(s.scheduledFor)}</div></div>${chip('Scheduled','purple')}</div></div>`:''}`).join('');
+  const psd=pageSchedFor(p); const psEntry=psd?`<div class="it"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><b>Scheduled</b><div class="small mute">Publishes ${fmt(psd)}</div></div>${chip('Scheduled','purple')}</div></div>`:'';
+  const draft=`<div class="it"><b>Current draft</b><div class="small mute">${changed.length?'Edited today by Alex':'No changes since last version'}</div></div>`;
+  return `${banners}<div class="tl">${live}${snaps}${psEntry}${draft}</div><div class="small mute" style="margin:10px 0 6px;font-weight:700">History</div><div class="tl">${hist}</div>`;
+}
+
+/* snapshots */
+function snapshotsApp(){
+  if(idea()) return `<div class="app"><div style="display:flex;justify-content:space-between;align-items:center"><h1>Snapshots</h1>${isAuthor()?'<button class="btn pri" data-act="newSnap">+ New snapshot</button>':''}</div>
+   <div class="card"><table><thead><tr><th>Name</th><th>Pages</th><th>Status</th><th>Next step</th></tr></thead><tbody>${db.snapshots.map(s=>`<tr class="click" data-act="openSnap" data-id="${s.id}"><td><b>${esc(s.title)}</b><div class="small mute">${esc(s.description||'')}</div></td><td>${s.pages.length}</td><td>${stateChip(s.state)}${s.single?chip('Page request','gray'):''}${s.state==='In review'?chip('Snapshot locked','gray'):''}${s.scheduledFor&&s.state!=='Published'?chip('Scheduled '+fmt(s.scheduledFor).split(',')[0],'purple'):''}${overdue(s)?chip('Past due','red'):''}${s.blockDirect&&s.state!=='Published'?chip('🔒 Direct publish blocked','amber'):''}</td><td>${esc(nextStep(s).text)}${(()=>{ if(s.state!=='In review'||!counts(s).needs) return ''; const rj=db.comments.filter(c=>c.snap===s.id&&c.kind==='reject-reason').slice(-1)[0]; return rj?`<div class="small mute">${esc(uname(rj.author))}: ${mentionHtml(rj.text.length>80?rj.text.slice(0,77)+'…':rj.text)}</div>`:''; })()}</td></tr>`).join('')}</tbody></table></div></div>`;
+  return `<div class="app"><h1>Snapshots</h1><div style="display:flex;gap:10px"><input type="text" value="/${DATA.org}/${DATA.site}"><button class="btn" data-act="later">Get Snapshots</button></div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>${db.snapshots.filter(x=>!x.single).length} snapshots</b><button class="btn pri sm" data-act="later">Add new</button></div>
+   <div style="display:flex;justify-content:space-between;font-weight:800;color:#777;padding:6px 18px"><span>NAME</span><span>REVIEW</span></div>
+   ${db.snapshots.filter(x=>!x.single).map(s=>`<div class="row" data-act="toggle" data-id="${s.id}"><span>${esc(s.title)}</span><span>${S.open===s.id?'⌄':'›'}</span></div>${S.open===s.id?todayDetail(s):''}`).join('')}</div>`;
+}
+function todayDetail(s){
+  const urlBtns=e=>[['Open on aem.reviews','later'],['Open on aem.live','later'],['Edit in DA','tEdit']].concat(e.synced?[['Edit Snapshot in DA','tEditSnap']]:[]).concat(s.launch&&isAuthor()?[['⬇ Sync to .snapshots','tSync']].concat(e.synced?[['⬆ Promote to main','tPromote']]:[]):[]);
+  return `<div class="exp"><div><div style="font-weight:800;margin-bottom:8px">${s.pages.length} URLS <button class="link" data-act="later">EDIT</button> <button class="link" data-act="later">SHARE URLS</button> <button class="link" data-act="later">SHARE REVIEW URLS</button> <button class="link" data-act="later">FIND FRAGMENTS</button></div>
+   ${s.pages.map(p=>`<div style="padding:8px 0;display:flex;justify-content:space-between;cursor:pointer" data-act="url" data-u="${s.id}${p.path}"><span>${esc(p.path)}</span><span>${S.openUrl===s.id+p.path?'⌄':'›'}</span></div>${S.openUrl===s.id+p.path?`<div class="pb">${urlBtns(p).map(b=>`<button data-act="${b[1]}" data-sid="${s.id}" data-p="${p.path}">${b[0]}</button>`).join('')}</div>`:''}`).join('')}</div>
+   <div><div class="lbl">TITLE</div><input type="text" value="${esc(s.title)}"><div class="lbl">DESCRIPTION</div><textarea rows="3">${esc(s.description||'')}</textarea><div class="lbl">PASSWORD</div><input type="text" value="•••••"><div class="lbl">SCHEDULE PUBLISH</div><input type="datetime-local" value="${s.scheduledFor?'2026-11-19T16:04':''}">
+   ${isAuthor()?`<div class="lbl" style="cursor:pointer" data-act="launchToggle">LAUNCH ${S.launchOpen?'⌄':'›'}</div>${S.launchOpen?(s.launch?`<div class="gb" style="grid-template-columns:repeat(2,1fr)"><button data-act="tLaunchSync" data-sid="${s.id}" title="Create or sync launch content in DA">⬇<br>Sync</button><button data-act="tLaunchPromote" data-sid="${s.id}" title="Sync launch content back to the production tree">⬆<br>Promote</button></div>`:`<button class="btn sm" style="margin-top:4px" data-act="enableLaunchAsk" data-sid="${s.id}">Enable Launch for this snapshot</button>`):''}`:''}
+   <div class="lbl">SNAPSHOT</div><div class="gb"><button data-act="later">Delete</button><button data-act="later">${s.locked?'Locked':'Unlocked'}</button><button class="bl" data-act="later">Save</button></div>
+   <div class="lbl">REVIEW</div><div class="gb"><button data-act="later">Request review</button><button class="dk" data-act="later">Reject &amp; unlock</button><button class="dk" data-act="later">Approve &amp; publish</button></div></div></div>`;
+}
+function recordCard(s){ const r=s.record; if(!r) return '';
+  const when=iso=>fmt(iso);
+  return `<div class="card" style="padding:14px 16px;margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>Publish record</b><button class="btn sm" data-act="exportRecord">Download</button></div><div class="small mute">Kept for records. Read-only.</div>
+   <table style="margin-top:8px;font-size:13px"><tbody>
+    <tr><td style="width:130px" class="mute">Published</td><td>${when(r.publishedAt)} · ${esc(r.by)}</td></tr>
+    <tr><td class="mute">Requested</td><td>${when(r.requestedAt)} · ${esc(r.requestedBy)}${r.workflow?' · '+esc(r.workflow):''}</td></tr>
+    <tr><td class="mute">Approved by</td><td>${r.steps.length?r.steps.map((st,i)=>{ const ap=st.approvals; if(!ap.length) return `${i+1}. ${esc(st.title)}: no approval recorded`; const last=ap[ap.length-1], who=[...new Set(ap.map(a=>a.who+(a.behalf?' for '+a.behalf:'')))].join(', '); return `${i+1}. ${esc(st.title)}: ${esc(who)} · ${when(last.when)}`; }).join('<br>'):'Not recorded'}</td></tr>
+    ${(r.early&&r.early.length)?`<tr><td class="mute">Published early</td><td>${r.early.map(x=>esc(x.path)+' by '+esc(x.by)+', '+when(x.when)+'. '+esc(x.reason)).join('<br>')}</td></tr>`:''}
+    <tr><td class="mute">Pages and versions</td><td>${r.pages.map(x=>esc(x.path)+' <b>v'+x.version+'</b>').join('<br>')}</td></tr>
+   </tbody></table></div>`; }
+function snapshotDetail(){
+  const s=snap(S.snapId); const ns=nextStep(s); const si=['Draft','In review','Published'].indexOf(s.state);
+  const au=isAuthor(), draft=s.state==='Draft', pub=s.state==='Published', ed=editable(s), c=counts(s), ov=overlapsOf(s);
+  const nact=au&&ns.act?`<button class="btn pri" data-act="${ns.act}">${ns.btn}</button>`:(isRev()&&s.state==='In review'?(canApprove(meId(),s)&&c.not?`<button class="btn pri" data-act="openReview" data-id="${s.id}">Open review</button>`:'<span class="small mute">Awaiting other reviewers</span>'):'');
+  const cs=db.comments.filter(x=>x.snap===s.id);
+  const canSync=ed&&s.pages.some(e=>entryChanged(s,e)), canProm=s.pages.some(e=>canPromote(s,e));
+  const launch=au&&!pub?`<div class="card" style="margin-top:16px;padding:14px 16px"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><b>Launch</b> ${s.launch?chip('On','green'):''}<div class="small mute">Edit pages inside this snapshot, then promote your changes to the main site.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${!s.launch?(ed?'<button class="btn sm" data-act="enableLaunchAsk">Enable Launch</button>':''):`${canSync?'<button class="btn sm" data-act="launchOverwriteAll">Overwrite all from current</button>':''}${canProm?'<button class="btn sm pri" data-act="launchPromoteAll">Promote all to main</button>':''}${!canSync&&!canProm?'<span class="small mute">Everything is in sync.</span>':''}`}</div></div></div>`:'';
+  return `<div class="app">
+   <h1 style="margin-bottom:6px">${esc(s.title)} ${stateChip(s.state)}${s.locked&&!pub?chip('Snapshot locked','gray'):''}${s.scheduledFor&&!pub?chip((overdue(s)?'Was due ':'Publishes ')+fmt(s.scheduledFor),overdue(s)?'red':'purple'):''}</h1>
+   <div class="mute">${esc(s.description||'No description')}${s.state==='In review'?' · The snapshot is locked. The source pages stay editable.':''} ${au&&!pub?'<button class="link small" data-act="editDetails">Edit details</button>':''}</div>
+   <div class="steps">${['Draft','In review','Published'].map((t,i)=>`<div class="st ${i===si?'on':i<si?'done':''}">${t}</div>`).join('')}</div>
+   <div class="nbar"><span><b>Next:</b> ${esc(ns.long||ns.text)}</span><span style="display:flex;gap:8px;flex-wrap:wrap">${au&&s.state==='In review'?`<button class="btn" data-act="cancelReview">${s.single?'Withdraw request':'Cancel review'}</button>`:''}${nact}</span></div>${s.state==='In review'?stepsHtml(s):''}
+   ${!pub&&ov.length?`<div class="note n-amber">⚠️ <b>Heads-up:</b> ${ov.length} page${ov.length>1?'s are':' is'} also in another snapshot${ov.slice(0,3).map(o=>`<div style="margin-top:6px"><b>${esc(title(o.p))}</b> is also in <b>${esc(o.t.title)}</b> (${o.t.state}${o.t.scheduledFor?', publishes '+fmt(o.t.scheduledFor):''}) <button class="btn sm" data-act="cmpSnaps" data-p="${o.p}" data-o="${o.t.id}">Compare</button></div>`).join('')}<div class="small mute" style="margin-top:6px">Compare before either publishes, so older work doesn't replace newer work.</div></div>`:''}
+   <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px"><b>PAGES (${s.pages.length})</b>${ed&&au?'<button class="btn sm" data-act="addPages">+ Add pages</button>':''}</div>
+   <div class="card" style="overflow:visible"><table><thead><tr><th>Page</th><th>State</th>${draft?'':'<th>Review</th>'}<th></th></tr></thead><tbody>${s.pages.map(p=>`<tr><td><span class="nm" data-act="openPage" data-p="${p.path}">${esc(p.path)}</span>${(()=>{const o=othersWith(s,p.path);return o.length?' '+chip('Also in '+o.map(x=>x.title).join(', '),'blue'):'';})()}</td><td>${p.isNew?chip('New · not published','blue'):''}${p.isFragment?chip('Fragment','gray'):''}${stateChips(s,p)}</td>${draft?'':`<td>${rvChip(p.review)}</td>`}<td style="width:50px"><span class="rel"><button class="btn sm" data-act="rowMenu" data-p="${p.path}">⋯</button>${S.menu&&S.menu.p===p.path?rowMenu(s,p):''}</span></td></tr>`).join('')||'<tr><td colspan="4" class="mute" style="padding:30px;text-align:center">No pages yet. Use Add pages.</td></tr>'}</tbody></table></div>
+   ${launch}
+   ${pub?recordCard(s):''}
+   ${!pub?`<div class="mockcfg"><div class="mh"><span class="tag">MOCKUP ONLY</span><b>Example settings</b><span class="mute">In the product these would be set by an admin. Shown here so you can react to the ideas.</span></div>
+   <label class="mrow"><input type="checkbox" data-act="toggleBlock" ${s.blockDirect?'checked':''} ${!ed||!au?'disabled':''}><span><b>Block direct publish</b><br><span class="mute">Pages in this snapshot can't be published on their own. They go live when the snapshot publishes.${!ed?' Locked while in review.':''}</span></span></label>
+   ${s.blockDirect?`<div class="mrow" style="cursor:default;padding-left:22px;flex-wrap:wrap"><span><b>Allowed to publish early</b></span>${DATA.users.filter(u=>u.role!=='group').map(u=>`<label style="display:inline-flex;gap:4px;align-items:center;margin-right:10px;cursor:pointer"><input type="checkbox" data-act="toggleEarly" data-u="${u.id}" ${(s.earlyAllowed||[]).includes(u.id)?'checked':''} ${!ed||!au?'disabled':''}> ${esc(u.name)}</label>`).join('')}${db.early.filter(x=>x.blockedBy.includes(s.id)).map(x=>`<div class="small" style="width:100%">Published early: ${esc(x.path)} by ${esc(x.by)}, ${fmt(x.when)}. ${esc(x.reason)}</div>`).join('')}</div>`:''}
+   <label class="mrow"><input type="checkbox" data-act="toggleHold" ${s.exclusive?'checked':''} ${!ed||!au?'disabled':''}><span><b>Keep pages out of other snapshots</b><br><span class="mute">Other snapshots can't add these pages. Pages already elsewhere stay there until removed.</span></span></label>
+   <div class="mrow" style="cursor:default"><span style="width:14px"></span><span><b>Review workflows</b><br><span class="mute">Who reviews is set here, not in the request. ${Object.entries(WORKFLOWS).map(([k,w])=>`<br>${esc(k)}: ${w.steps.map(st=>esc(st.title)+' ('+esc(stepNames(st.approvers))+')').join(' → ')} → publish · ${esc(stepNames(w.watchers))} watch`).join('')}</span></span></div>
+   <div class="mrow" style="cursor:default"><span style="width:14px"></span><span><b>New pages in browse</b><br><span class="mute">Pages that exist only in a snapshot: show them greyed out, or hide them until publish.</span> <select onchange="S.newView=this.value;render()" style="width:auto;font-size:12px;padding:1px 6px;margin-left:4px"><option value="greyed" ${S.newView==='greyed'?'selected':''}>Greyed out</option><option value="hidden" ${S.newView==='hidden'?'selected':''}>Hidden</option></select></span></div></div>`:''}
+   <div class="card" style="padding:14px 16px;margin-top:16px"><b>Comments</b>${cs.map(cmHtml).join('')||'<div class="small mute" style="margin-top:6px">No comments yet.</div>'}<textarea id="reply" data-mention="1" rows="2" placeholder="Reply, @mention…" style="margin-top:8px"></textarea><div style="text-align:right;margin-top:6px"><button class="btn sm pri" data-act="reply">Reply</button></div></div>
+   <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">${au&&!pub?'<button class="btn" data-act="schedule">Schedule…</button>':''}${!pub?'<button class="btn" data-act="share">Share review link</button>':''}${!pub?'<button class="btn" data-act="fragments">Find fragments</button>':''}${au&&ed?'<button class="btn bad" data-act="delSnap">Delete</button>':''}</div></div>`;
+}
+function rowMenu(s,p){
+  const au=isAuthor(), P=p.path, ed=editable(s)||(s.state==='In review'&&p.review==='Needs changes'), liveOk=!!db.liveContent[P];
+  const diff=entryChanged(s,p)||entryEdited(s,p);
+  const b=(act,label,extra)=>`<button data-act="${act}" data-p="${P}" ${extra||''}>${label}</button>`;
+  const g1=[b('cmp','Preview','data-k="preview"'),b('openLink','Open review link'),liveOk?b('openLive','Open live page'):'',au?b('openMain','Edit page'):''].filter(Boolean);
+  const g2=[au&&s.launch&&ed?b('editSnapVer','Edit snapshot version'):'',liveOk?b('cmp','Compare with live','data-k="live"'):'',diff?b('cmp','Compare with current','data-k="cur"'):''].filter(Boolean);
+  const g3=[au&&ed&&diff?b('updateFrom','Overwrite from current'):'',canPromote(s,p)?b('promoteOne','Promote to main','data-sid="'+s.id+'"'):'',au&&ed?b('remove','Remove'):''].filter(Boolean);
+  return `<div class="menu" style="top:30px;right:0">${[g1,g2,g3].filter(g=>g.length).map(g=>g.join('')).join('<hr>')}</div>`;
+}
+
+/* review */
+function reviewView(){
+  const s=snap(S.snapId); const pend=s.pages.filter(p=>p.review==='Not reviewed');
+  if(!pend.find(p=>p.path===S.revPath)) S.revPath=pend[0]&&pend[0].path;
+  const p=S.revPath&&s.pages.find(x=>x.path===S.revPath);
+  const head=`<div class="app"><p><button class="link" data-act="go" data-s="browse">‹ Back</button></p><h1 style="font-size:26px">Review: ${esc(s.title)} ${stateChip(s.state)}${s.state==='In review'?chip('Snapshot locked','gray'):''}</h1>${stepsHtml(s)}`;
+  if(!p){ const nc=counts(s).needs; return head+(nc?`<div class="note n-amber">${nc} page${nc>1?'s':''} sent back to the author. Approved pages are not re-reviewed.</div>`:`<div class="note n-green">✅ All pages are approved.${s.scheduledFor?' It publishes '+fmt(s.scheduledFor)+'.':''}</div>`)+'</div>'; }
+  const cs=db.comments.filter(c=>c.snap===s.id&&(c.page===p.path||c.page===null));
+  const rev=isRev()&&canApprove(meId(),s);
+  return head+`<div class="stb">${s.pages.map(x=>`<button class="${x.path===S.revPath?'on':''}" data-act="revPick" data-p="${x.path}" ${x.review!=='Not reviewed'?'disabled':''}>${esc(title(x.path))} ${rvChip(x.review)}</button>`).join('')}</div>
+  <div class="two">${pageCard('Live',db.liveContent[p.path]||null,copyFor(s,p.path))}${pageCard('Snapshot version',copyFor(s,p.path),db.liveContent[p.path]||null)}</div>
+  <div class="card" style="padding:14px;margin-top:14px">${S.reasonOpen?`<div class="lbl" style="margin-top:0">Reason (required)</div><textarea id="reason" data-mention="1" rows="2" placeholder="${esc(DATA.reviewRequest.rejectReasonExample)}"></textarea><div class="foot"><button class="btn" data-act="reasonCancel">Cancel</button><button class="btn bad" data-act="reasonSend">Request changes</button></div>`
+   :`<div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;align-items:center"><span class="mute small">${rev?'Reviewing as '+uname(meId())+(viaGroup(meId(),s)?', on behalf of '+esc(viaGroup(meId(),s)):''):isRev()?'Awaiting other reviewers':'Only reviewers can approve'}</span><span><button class="btn bad" data-act="reasonOpen" ${rev?'':'disabled'}>Request changes</button> <button class="btn ok" data-act="approve" ${rev?'':'disabled'}>${s.single&&s.steps&&s.step>=s.steps.length-1&&!s.scheduledFor?'Approve &amp; publish':'Approve'}</button></span></div>`}</div>
+  <div style="margin-top:14px"><b>Comments</b>${cs.map(cmHtml).join('')||'<div class="small mute">None yet.</div>'}</div></div>`;
+}
+
+/* modals */
+function modalHtml(){
+  const m=S.modal; const wrap=(h,w)=>`<div class="ov" data-act="ovClose"><div class="md ${w||''}">${h}</div></div>`;
+  if(m.type==='new') return wrap(`<h2>New snapshot</h2><div class="lbl">TITLE</div><input type="text" id="nm" placeholder="Winter campaign" oninput="document.getElementById('idh').textContent=slug(this.value)||'—'"><div class="small mute" style="margin-top:3px">Snapshot id: <code id="idh">—</code></div><div class="lbl">DESCRIPTION <span class="mute">(optional)</span></div><textarea id="ds" rows="2"></textarea>
+   <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="createSnap">${m.addSel?(()=>{const n=[...S.sel].filter(x=>!isFolder(x)).length; return `Create and add ${n} page${n===1?'':'s'}`;})():'Create'}</button></div>`);
+  if(m.type==='cmp') return wrap(`<h2>${esc(m.title)}</h2>${m.note?`<div class="small mute" style="margin-bottom:8px">${m.note}</div>`:''}${m.single?`<div style="max-width:460px;margin:0 auto">${pageCard(m.ll,m.l,null)}</div>`:`<div class="two">${pageCard(m.ll,m.l,m.r)}${pageCard(m.rl,m.r,m.l)}</div>`}
+   <div class="foot">${m.upd?'<span class="small mute" style="margin-right:auto"><button class="btn" disabled title="Later">Merge changes</button></span>':''}<button class="btn" data-act="close">${m.upd?'Keep as is':'Close'}</button>${m.upd?`<button class="btn pri" data-act="doUpdate" data-id="${m.upd.id}" data-p="${m.upd.p}">Overwrite</button>`:''}</div>`,'wide');
+  if(m.type==='confirm') return wrap(`<h2>Delete this snapshot?</h2><div class="mute">The source pages are not affected.${(snap(S.snapId).pages||[]).some(e=>e.isNew)?' New pages created in this snapshot will be discarded.':''}</div><div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="delGo">Delete</button></div>`);
+  if(m.type==='schedule'){ const s=snap(S.snapId); const ov=overlapsOf(s);
+    return wrap(`<h2>Schedule</h2><div class="mute small">Choose when ${esc(s.title)} goes live.</div><div class="lbl">DATE AND TIME</div><input type="datetime-local" id="when" value="${s.scheduledFor?toLocalInput(s.scheduledFor):'2026-11-19T16:04'}">
+     ${s.pages.some(e=>pageSchedFor(e.path))?`<div class="note n-amber" style="margin-top:12px">⚠️ ${s.pages.filter(e=>pageSchedFor(e.path)).map(e=>'<b>'+esc(title(e.path))+'</b> is already scheduled on its own for '+fmt(pageSchedFor(e.path))).join('; ')}. The snapshot's schedule doesn't change that.</div>`:''}
+     ${ov.length?`<div class="note n-amber" style="margin-top:12px">⚠️ <b>${esc(title(ov[0].p))}</b> is also in <b>${esc(ov[0].t.title)}</b>${ov[0].t.scheduledFor?' (publishes '+fmt(ov[0].t.scheduledFor)+')':''}. Check which version should go live.</div>`:''}
+     <div class="foot">${s.scheduledFor?'<button class="btn" data-act="unschedule" style="margin-right:auto">Clear schedule</button>':''}<button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="saveSchedule">Schedule</button></div>`);}
+  if(m.type==='publishEarly'){ const p=m.path, bl=blockers(p);
+    return wrap(`<h2>Publish early</h2><div class="note n-amber" style="margin-top:12px">⚠️ <b>${esc(title(p))}</b> is in ${bl.map(b=>esc(b.title)).join(', ')}, and direct publish is blocked until then. Publishing early goes live now and is recorded with your name and reason.</div>
+     <div class="lbl">REASON (REQUIRED)</div><textarea id="pereason" data-mention="1" rows="3"></textarea><div class="small mute" style="margin-top:3px">At least 5 characters.</div>
+     <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn bad" data-act="publishEarly">Publish early</button></div>`);}
+  if(m.type==='editDetails'){ const sn=snap(S.snapId);
+    return wrap(`<h2>Edit details</h2><div class="lbl">TITLE</div><input type="text" id="edt" value="${esc(sn.title)}"><div class="small mute" style="margin-top:3px">Snapshot id: <code>${esc(sn.id)}</code> (doesn't change)</div>
+     <div class="lbl">DESCRIPTION</div><textarea id="edd" rows="3">${esc(sn.description||'')}</textarea>
+     <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="saveDetails">Save</button></div>`);}
+  if(m.type==='pageSchedule'){ const p=m.path, ex=pageSchedFor(p), sn=snapsOf(p).filter(x=>!x.single), req=snapsOf(p).filter(x=>x.single&&x.scheduledFor);
+    return wrap(`<h2>Schedule publish</h2><div class="mute small">${esc(title(p))} will publish on its own at this time.</div>
+     ${ex?`<div class="note n-amber" style="margin-top:12px">⚠️ <b>This page is already scheduled</b> to publish on its own at ${fmt(ex)}${new Date(ex)<NOW()?' (past due)':''}. Saving replaces that time.</div>`:''}
+     ${req.map(x=>`<div class="note n-amber" style="margin-top:12px">⚠️ <b>This page is already scheduled</b> through a publish request, for ${fmt(x.scheduledFor)}.</div>`).join('')}
+     <div class="lbl">DATE AND TIME</div><input type="datetime-local" id="psw" value="${ex?toLocalInput(ex):'2026-11-19T16:04'}">
+     ${sn.length?`<div class="note n-amber" style="margin-top:12px">⚠️ This page is also in ${sn.map(x=>'<b>'+esc(x.title)+'</b>'+(x.scheduledFor?' (<b>already scheduled</b>, publishes '+fmt(x.scheduledFor)+')':'')).join(', ')}. Scheduling it here publishes it separately from the snapshot.</div>`:''}
+     <div class="foot">${ex?'<button class="btn" data-act="clearPageSched" style="margin-right:auto">Cancel schedule</button>':''}<button class="btn" data-act="close">Close</button><button class="btn pri" data-act="savePageSched">${ex?'Replace schedule':'Schedule'}</button></div>`);}
+  if(m.type==='request'){ const page=m.scope==='page', sn=page?null:snap(S.snapId); const wf=m.wf||'Request publish';
+    const pend=page?pendingFor(m.path):[];
+    if(pend.length) return wrap(`<h2>Request review</h2><div class="mute small">${esc(title(m.path))}</div><div class="note n-amber" style="margin-top:12px">This page already has a pending request: <b>${esc(pend[0].title)}</b>. ${esc(reqStatus(pend[0]))}.</div><div class="foot"><button class="btn pri" data-act="close">Close</button></div>`);
+    return wrap(`<h2>Request review</h2><div class="mute small">${page?esc(title(m.path))+' · '+esc(m.path):esc(sn.title)+' · '+sn.pages.length+' pages'}</div>
+     <div style="margin-top:8px">${page?pageStateChips(m.path)+(snapDiffers(m.path).length?chip('Snapshot differs from current','amber'):''):(()=>{const upd=sn.pages.filter(e=>entryChanged(sn,e)).length, ov=overlapsOf(sn).length; return (sn.scheduledFor?chip((overdue(sn)?'Past due ':'Scheduled ')+fmt(sn.scheduledFor).split(',')[0],overdue(sn)?'red':'purple'):'')+(upd?chip(upd+' page'+(upd>1?'s':'')+' with updates','amber'):'')+(ov?chip(ov+' also in other snapshot'+(ov>1?'s':''),'blue'):'')+(sn.blockDirect?chip('🔒 Direct publish blocked','amber'):'');})()}</div>
+     ${page?'<div style="margin-top:8px"><button class="link" data-act="reviewChanges">Review changes</button> <span class="small mute">Compare with the live page</span></div>':''}
+     <div class="lbl">WORKFLOW</div><select id="wfsel" onchange="wfChange(this.value)">${Object.keys(WORKFLOWS).map(k=>`<option ${k===wf?'selected':''}>${esc(k)}</option>`).join('')}</select>
+     <div id="wfbox">${wfHtml(wf)}</div>
+     ${page?`<div class="lbl">PUBLISH</div><select id="pubmode" onchange="document.getElementById('pubwhen').style.display=this.value==='later'?'block':'none'"><option value="now">As soon as it's approved</option><option value="later">At a scheduled time</option></select><input type="datetime-local" id="pubwhen" value="2026-11-19T16:04" style="display:none;margin-top:6px">${schedSources(m.path).length?`<div class="note n-amber small" style="margin-top:8px">⚠️ This page is already scheduled: ${schedSources(m.path).map(x=>esc(x.label)+' · '+fmt(x.iso)).join('; ')}.</div>`:''}`:''}
+     <div class="lbl">NOTE FOR REVIEWERS</div><textarea id="nt" data-mention="1" rows="2">${esc(DATA.reviewRequest.note)}</textarea><div class="small mute" style="margin-top:3px">At least 5 characters.</div>
+     <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="sendRequest">Request review</button></div>`);}
+  if(m.type==='todayRequest'){ const pend=pendingFor(m.path);
+    if(pend.length) return wrap(`<h2>Request Publish</h2><div class="note n-amber" style="margin-top:12px">This page already has a pending request. ${esc(reqStatus(pend[0]))}.</div><div class="foot"><button class="btn pri" data-act="close">Close</button></div>`);
+    return wrap(`<h2>Request Publish</h2><div class="mute small">Submit this website update for approval</div>
+     <div class="card" style="padding:12px 16px;margin-top:12px"><b>Request details</b><div class="small" style="margin-top:6px">Page <code>${esc(m.path)}</code><br>Requested by <code>Alex</code><br>Preview <button class="link" data-act="later">View Preview</button></div></div>
+     <div class="card" style="padding:12px 16px;margin-top:10px"><b>Will be reviewed by</b><div style="margin-top:6px">${WORKFLOWS['Request publish'].steps[0].approvers.map(a=>`<code>${esc(stepNames([a]))}</code> `).join('')}</div></div>
+     <div class="lbl">Please provide a description of your website content changes and reason for the content update. *</div><textarea id="tdesc" rows="2" placeholder="Overview of the website updates and context for the content update request."></textarea><div class="small mute" style="margin-top:3px">Minimum 5 characters required</div>
+     <div class="foot"><button class="btn pri" data-act="todaySubmit">Request Publish</button></div>`);}
+  if(m.type==='newPage'){ const s=snap(S.snapId);
+    return wrap(`<h2>New page</h2><div class="mute small">Created inside ${esc(s.title)}. It isn't on the live site until the snapshot publishes.</div>
+     <div class="lbl">PAGE NAME</div><input type="text" id="npn" placeholder="Product launch" oninput="npAuto()">
+     <div class="lbl">PATH</div><input type="text" id="npp" value="/" oninput="npCheck(true)"><div id="npw" class="small" style="margin-top:3px"></div>
+     <div class="lbl">TEMPLATE</div><select id="npt"><option>Landing page</option><option>Article</option><option>Blank</option></select>
+     <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="createPage">Create page</button></div>`);}
+  if(m.type==='copyMode'){ const sn=snap(m.snap); const lab=m.dir==='fork'?(idea()?'Overwrite from current':'Sync Down'):(idea()?'Promote to main':'Promote Up');
+    return wrap(`<h2>${lab}: merge or overwrite?</h2><div class="mute" style="margin-top:6px"><b>Merge</b> combines the changes and shows a diff.<br><b>Overwrite</b> replaces the ${m.dir==='fork'?'snapshot version':'main page'} entirely.</div>
+     <div class="small mute" style="margin-top:8px">${m.paths.map(x=>esc(title(x))).join(', ')} · ${esc(sn.title)}</div>
+     <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn" data-act="copyDo" data-mode="merge">Merge</button><button class="btn pri" data-act="copyDo" data-mode="overwrite">Overwrite</button></div>`);}
+  if(m.type==='enableLaunch') return wrap(`<h2>Enable Launch</h2><div class="mute" style="margin-top:6px">Launch lets you edit pages inside this snapshot, so it can change over time and not stay a single moment-in-time capture. Once it's on, you can edit snapshot versions and promote your changes to the main site.</div><div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="enableLaunch">Enable Launch</button></div>`);
+  if(m.type==='share'){ const sn=snap(S.snapId);
+    return wrap(`<h2>Share review link</h2><div class="mute small">Reviewers open each page on its own review link${sn.password?'. A password is required.':'.'}</div>
+     <div class="pickbox" style="max-height:140px;margin-top:10px">${sn.pages.map(e=>`<label style="cursor:default;font-size:12px">${esc(sn.id)}--main--${esc(DATA.site)}--${esc(DATA.org)}.aem.reviews${esc(e.path)}</label>`).join('')}</div>
+     <div class="lbl">PASSWORD</div><input type="text" id="shpw" value="${esc(sn.password||'')}" placeholder="No password">
+     <div class="foot"><button class="btn" data-act="close">Close</button><button class="btn" data-act="savePw">Save password</button><button class="btn pri" data-act="copyLinks">Copy links</button></div>`);}
+  if(m.type==='fragments'){ const sn=snap(S.snapId); const used=db.fragments.map(f=>({f,n:sn.pages.filter(e=>FRAG_USE[f]==='all'||(FRAG_USE[f]||[]).includes(e.path)||(FRAG_USE[f]||[]).some(u=>u.startsWith(e.path+'/'))).length})).filter(x=>x.n>0); const can=isAuthor()&&editable(sn);
+    return wrap(`<h2>Find fragments</h2><div class="mute small">Fragments used on pages in ${esc(sn.title)}. Fragments aren't part of a snapshot unless you add them.</div>
+     <div class="pickbox" id="fglist" style="max-height:200px;margin-top:10px">${used.map(x=>{const inS=!!entryFor(sn,x.f); return `<label><input type="checkbox" value="${x.f}" ${inS||!can?'disabled':''}> ${esc(x.f)} <span class="mute small">Used on ${x.n} page${x.n>1?'s':''}</span> ${inS?chip('Added','green'):''}</label>`;}).join('')||'<label style="cursor:default" class="mute">No fragments found.</label>'}</div>
+     <div class="foot"><button class="btn" data-act="close">${can?'Cancel':'Done'}</button>${can?'<button class="btn pri" data-act="addFragments">Add to snapshot</button>':''}</div>`);}
+  if(m.type==='picker'){ const s=snap(S.snapId);
+    const pgs=rows().filter(r=>r.type==='page'); const secs=[...new Set(pgs.map(r=>r.path.split('/')[1].replace('index','other').replace('guided-journey','other')))];
+    return wrap(`<h2>Add pages</h2><div class="mute small">Choose pages for ${esc(s.title)}.</div>${isAuthor()?'<div style="margin-top:8px"><button class="link" data-act="newPageOpen">+ New page…</button> <span class="small mute">For pages that don\'t exist yet, such as a product launch.</span></div>':''}
+     <input type="text" id="pq" placeholder="Filter pages…" oninput="pfilter()" style="margin-top:10px">
+     <div class="stb" style="margin:10px 0 6px" id="psecs"><button class="on" data-sec="all" onclick="psec('all')">All</button>${secs.map(x=>`<button data-sec="${x}" onclick="psec('${x}')">${esc(x)}</button>`).join('')}</div>
+     <div class="pickbox" id="pklist" style="max-height:260px">${pgs.map(r=>{const sec=r.path.split('/')[1].replace('index','other').replace('guided-journey','other'); const inS=!!entryFor(s,r.path); const o=othersWith(s,r.path); const held=claimedBy(r.path,s);
+       return `<label data-n="${esc(r.path.toLowerCase())}" data-sec="${sec}"><input type="checkbox" value="${r.path}" ${inS||held?'disabled':''}> ${esc(r.path)} ${inS?'<span class="mute small">added</span>':held?chip('🔒 held by '+held.title,'amber'):o.length?chip('In '+o.length+' other snapshot'+(o.length>1?'s':''),'blue'):''}</label>`;}).join('')}</div>
+     <div class="foot"><button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="pickAdd">Add pages</button></div>`);}
+  return '';
+}
+function wfHtml(wf){ const w=WORKFLOWS[wf]; const ch=id=>`<span class="chip c-gray" style="font-size:13px;padding:3px 12px">${esc(stepNames([id]))}${(()=>{const g=DATA.users.find(u=>u.id===id); return g&&g.role==='group'?' <span class="mute small" style="font-weight:500">('+esc(stepNames(g.members))+')</span>':'';})()}</span>`;
+  return `<div class="small mute" style="margin-top:4px">${esc(w.desc)}</div>
+   <div class="lbl">APPROVERS <span class="mute" style="font-weight:400;text-transform:none">in order. Any one approver completes a step.</span></div>
+   ${w.steps.map((st,i)=>`<div style="display:flex;gap:8px;align-items:center;margin:4px 0;flex-wrap:wrap"><b style="min-width:20px">${i+1}</b><span class="small" style="min-width:90px">${esc(st.title)}</span>${st.approvers.map(ch).join('')}</div>`).join('')}
+   <div class="small mute" style="margin:2px 0 0 28px">then publish</div>
+   <div class="lbl">WATCHERS <span class="mute" style="font-weight:400;text-transform:none">notified, can comment, can't approve</span></div><div>${w.watchers.map(ch).join('')}</div>
+   <div class="small mute" style="margin-top:8px">Who reviews is set by your admin for each workflow.</div>`; }
+function makePageRequest(path,wf){ const id='req-'+slug(title(path))+'-'+(db.snapshots.filter(x=>x.single).length+1);
+  const sn={id,title:'Publish: '+title(path),description:'Publish request for '+title(path),single:true,state:'In review',locked:true,createdAt:'2026-11-12',scheduledFor:null,pages:[{path,review:'Not reviewed'}],copies:{[path]:clone(content(path))},base:{[path]:clone(content(path))}};
+  db.snapshots.unshift(sn); return sn; }
+function wfChange(v){ S.modal.wf=v; document.getElementById('wfbox').innerHTML=wfHtml(v); }
+function npCheck(touch){ const pp=document.getElementById('npp'); if(touch) pp.dataset.t='1'; const t=pathTakenBy(pp.value.trim()); document.getElementById('npw').innerHTML=t?`<span style="color:#a1100c">⚠️ ${esc(pp.value)} is already used${t!==true?' by '+esc(t.title):''}.</span>`:''; }
+function npAuto(){ const pp=document.getElementById('npp'); if(!pp.dataset.t) pp.value='/'+slug(document.getElementById('npn').value); npCheck(false); }
+let psecCur='all';
+function pfilter(){ const q=document.getElementById('pq').value.toLowerCase(); document.querySelectorAll('#pklist label').forEach(l=>{ l.style.display=(l.dataset.n.includes(q)&&(psecCur==='all'||l.dataset.sec===psecCur))?'':'none'; }); }
+function psec(x){ psecCur=x; document.querySelectorAll('#psecs button').forEach(b=>b.classList.toggle('on',b.dataset.sec===x)); pfilter(); }
+function filt(inp){ const q=inp.value.toLowerCase(); inp.nextElementSibling.querySelectorAll('label').forEach(l=>l.style.display=l.dataset.n.includes(q)?'':'none'); }
+function toast(t,a,l){ const el=document.getElementById('toast'); el.innerHTML=esc(t)+(a?` <button class="btn sm" data-act="${a[0]}" data-id="${a[1]}">${l}</button>`:''); el.style.display='flex'; clearTimeout(toast.t); toast.t=setTimeout(()=>el.style.display='none',4800); }
+function setRole(r){ S.inbox=false; S.role=r; if(r!=='author') S.mode='idea'; S.screen='browse'; S.sel.clear(); S.filter=r==='author'?'All':'Waiting on me'; S.snapId=null; S.modal=null; S.menu=null; render(); toast('Viewing as '+ROLES[r].label.toLowerCase()); }
+
+/* actions */
+function addPaths(s){ let n=0; s.copies=s.copies||{}; s.base=s.base||{}; const fo=[...S.sel].filter(isFolder); S.skipped=0; S.shared=0; S.held=[];
+  S.sel.forEach(p=>{ if(isFolder(p)) return; if(S.onlyEdited&&fo.some(x=>kids(x).includes(p))&&!isEdited(p)){ S.skipped++; return; }
+    const cl=claimedBy(p,s); if(cl){ S.held.push(cl.title); return; }
+    if(!entryFor(s,p)){ if(othersWith(s,p).length) S.shared++; s.pages.push({path:p,review:'Not reviewed'}); s.copies[p]=clone(content(p)); s.base[p]=clone(content(p)); n++; } }); S.onlyEdited=false; return n; }
+function copyApply(dir,sid,paths,mode,quiet){ const s=snap(sid); s.base=s.base||{}; let others=new Set();
+  paths.forEach(path=>{ const e=s.pages.find(x=>x.path===path);
+    [path].concat(kids(path)).forEach(x=>{
+      if(dir==='fork'){ s.copies[x]=clone(content(x)); s.base[x]=clone(content(x)); }
+      else { db.content[x]=clone(s.copies[x]); s.base[x]=clone(db.content[x]); othersWith(s,x).forEach(t=>others.add(t.title)); }
+    });
+    if(e&&dir==='fork') e.synced=true; });
+  if(quiet) return;
+  const verb=mode==='merge'?'Merged':(dir==='fork'?'Overwritten':'Promoted');
+  toast(dir==='fork'?`${verb}: snapshot version updated from the current page`:`${verb} to main`+(others.size?` · ${[...others].join(', ')} ${others.size>1?'now show':'now shows'} Update available`:'')); }
+function publish(s,by){ s.pages.forEach(e=>{ if(e.isNew){ db.pages.push({path:e.path,type:'page',title:db.newPages[e.path].title}); delete e.isNew; } }); s.state='Published'; s.locked=true; s.publishedAt=(by==='Scheduled publish'&&s.scheduledFor)?s.scheduledFor:tick(); const recPages=[];
+  s.pages.forEach(e=>[e.path].concat(kids(e.path)).forEach(x=>{ db.live[x]=s.publishedAt; db.liveContent[x]=clone(copyFor(s,x)); db.ver[x]=(db.ver[x]||0)+1; db.liveVia[x]=s.id; recPages.push({path:x,title:title(x),version:db.ver[x]}); }));
+  s.record={publishedAt:s.publishedAt,by:by||uname(meId()),requestedBy:s.requestedBy||'Alex',requestedAt:s.requestedAt||(s.createdAt?s.createdAt+'T09:00:00-08:00':s.publishedAt),workflow:s.workflow||null,steps:(s.steps||[]).map((st,i)=>({title:st.title,approvals:(s.approvals&&s.approvals[i])||[]})),pages:recPages,early:db.early.filter(x=>x.blockedBy.includes(s.id)).map(x=>({path:x.path,by:x.by,when:x.when,reason:x.reason}))};
+  toast(s.title+' is live · all pages show Published'); }
+const A={
+  mode(el){ S.mode=el.dataset.m; S.inbox=false; if(S.mode==='today'&&S.tab==='Review') S.tab='Versions'; },
+  go(el){ S.screen=el.dataset.s; },
+  reset(){ init(); toast('Reset'); },
+  later(){ toast('Not part of this demo yet'); },
+  filter(el){ S.filter=el.dataset.f; },
+  pick(el){ const p=el.dataset.p,on=!S.sel.has(p); [p].concat(kids(p)).forEach(x=>on?S.sel.add(x):S.sel.delete(x)); },
+  clearSel(){ S.sel.clear(); },
+  addMenu(){ S.menu='add'; },
+  toggleEdited(){ S.onlyEdited=!S.onlyEdited; S.menu='add'; },
+  sendTarget(el){ S.sendTarget=el.dataset.t; },
+  addTo(el){ const s=snap(el.dataset.id); const n=addPaths(s); S.sel.clear(); toast((n?`Added ${n} page${n===1?'':'s'} to ${s.title}${S.skipped?` (${S.skipped} unchanged skipped)`:''}${S.shared?` · ${S.shared} also in another snapshot`:''}`:(S.held.length?'Nothing added':`Already in ${s.title}`))+(S.held.length?` · ${S.held.length} held by ${[...new Set(S.held)].join(', ')}`:''),['openSnap',s.id],'Open'); },
+  edAdd(){ S.menu='edadd'; },
+  edAddTo(el){ S.sel=new Set([S.path]); A.addTo(el); },
+  edNew(){ S.sel=new Set([S.path]); S.modal={type:'new',addSel:true}; },
+  newIn(){ S.modal={type:'new',addSel:true}; },
+  newSnap(){ S.modal={type:'new'}; },
+  createSnap(){ const t=document.getElementById('nm').value.trim(); if(!t){ toast('Add a title first'); return; }
+    const s={id:slug(t)||'snapshot',title:t,description:document.getElementById('ds').value.trim(),state:'Draft',locked:false,createdAt:'2026-11-12',scheduledFor:null,pages:[],copies:{},base:{}};
+    S.held=[]; S.shared=0; if(S.modal.addSel){ addPaths(s); S.sel.clear(); } db.snapshots.unshift(s); S.modal=null; toast(`Created ${t}`+(S.held.length?` · ${S.held.length} page${S.held.length>1?'s':''} held by ${[...new Set(S.held)].join(', ')} not added`:'')+(S.shared?` · ${S.shared} also in another snapshot`:''),['openSnap',s.id],'Open'); },
+  openPage(el){ S.editSnap=null; S.path=el.dataset.p; S.screen='editor'; S.tab='Versions'; },
+  send(){ S.sendOpen=!S.sendOpen; },
+  badge(){ S.menu='badge'; },
+  tab(el){ S.tab=el.dataset.t; },
+  panels(){ S.panels=true; },
+  openApp(){ S.screen='snapshots'; },
+  openSnap(el){ S.snapId=el.dataset.id; S.screen=idea()?'snapshot':'snapshots'; if(!idea()) S.open=el.dataset.id; },
+  toggle(el){ S.open=S.open===el.dataset.id?null:el.dataset.id; S.openUrl=null; S.snapId=el.dataset.id; },
+  launchToggle(){ S.launchOpen=!S.launchOpen; },
+  tEdit(el){ S.editSnap=null; S.path=el.dataset.p; S.screen='editor'; S.tab='Versions'; },
+  tEditSnap(el){ S.snapId=el.dataset.sid; A.editSnapVer({dataset:{p:el.dataset.p}}); },
+  tSync(el){ const sn=snap(el.dataset.sid), e=sn.pages.find(x=>x.path===el.dataset.p); S.snapId=sn.id; if(!e.synced) copyApply('fork',sn.id,[e.path],'overwrite'); else S.modal={type:'copyMode',dir:'fork',snap:sn.id,paths:[e.path]}; },
+  tPromote(el){ S.snapId=el.dataset.sid; S.modal={type:'copyMode',dir:'promote',snap:el.dataset.sid,paths:[el.dataset.p]}; },
+  tLaunchSync(el){ const sn=snap(el.dataset.sid); S.snapId=sn.id; S.modal={type:'copyMode',dir:'fork',snap:sn.id,paths:sn.pages.map(e=>e.path)}; },
+  tLaunchPromote(el){ const sn=snap(el.dataset.sid), ps=sn.pages.filter(e=>e.synced).map(e=>e.path); S.snapId=sn.id; if(!ps.length){ toast('Nothing to promote yet. Sync a page first.'); return; } S.modal={type:'copyMode',dir:'promote',snap:sn.id,paths:ps}; },
+  url(el){ S.openUrl=S.openUrl===el.dataset.u?null:el.dataset.u; },
+  rowMenu(el){ S.menu={p:el.dataset.p}; },
+  addPages(){ psecCur='all'; S.modal={type:'picker'}; },
+  pickAdd(){ const vals=[...document.querySelectorAll('#pklist input:checked')].map(i=>i.value); if(!vals.length){ toast('Pick at least one page'); return; } S.sel=new Set(vals); const s=snap(S.snapId); const n=addPaths(s); S.sel.clear(); S.modal=null; toast((n?`Added ${n} page${n===1?'':'s'} to ${s.title}${S.shared?` · ${S.shared} also in another snapshot`:''}`:'Nothing added')+(S.held.length?` · ${S.held.length} held by ${[...new Set(S.held)].join(', ')}`:'')); },
+  newPageOpen(){ S.modal={type:'newPage'}; },
+  createPage(){ const name=document.getElementById('npn').value.trim(), path=document.getElementById('npp').value.trim(), tpl=document.getElementById('npt').value;
+    if(!name){ toast('Add a page name first'); return; }
+    if(!/^\/[a-z0-9\-\/]+$/.test(path)){ toast('Path should look like /product-launch'); return; }
+    const t=pathTakenBy(path); if(t){ toast('That path is already used'+(t!==true?' by '+t.title:'')); return; }
+    const s=snap(S.snapId); db.newPages[path]={title:name,snap:s.id,template:tpl};
+    const blocks=({'Blank':[],'Landing page':['Hero','Cards','Footer CTA'],'Article':['Hero','Article body']})[tpl].map((t2,i)=>({id:'n'+i,t:t2}));
+    db.content[path]={headline:name,body:'New page. Start writing here.',img:IMGS[0],blocks};
+    s.pages.push({path,review:'Not reviewed',isNew:true}); s.copies=s.copies||{}; s.base=s.base||{}; s.copies[path]=clone(db.content[path]); s.base[path]=clone(db.content[path]); S.modal=null;
+    toast('Created '+name+' in '+s.title,['openNewPage',path],'Open in editor'); },
+  openNewPage(el){ S.editSnap=null; S.path=el.dataset.id; S.screen='editor'; S.tab='Versions'; },
+  delSnap(){ S.modal={type:'confirm'}; },
+  delGo(){ const d=snap(S.snapId); (d.pages||[]).filter(e=>e.isNew).forEach(e=>{ delete db.content[e.path]; delete db.newPages[e.path]; }); db.snapshots=db.snapshots.filter(s=>s.id!==S.snapId); S.modal=null; S.screen='snapshots'; toast('Snapshot deleted'); },
+  remove(el){ const s=snap(S.snapId),e=s.pages.find(x=>x.path===el.dataset.p); if(e&&e.isNew){ delete db.content[e.path]; delete db.newPages[e.path]; } s.pages=s.pages.filter(x=>x.path!==el.dataset.p); toast(e&&e.isNew?'New page discarded':'Removed from snapshot'); },
+  cmp(el){ const p=el.dataset.p,s=snap(S.snapId),k=el.dataset.k,cp=copyFor(s,p);
+    if(k==='live') S.modal={type:'cmp',title:'Compare with live · '+title(p),ll:'Live',l:db.liveContent[p]||null,rl:'Snapshot version',r:cp};
+    else if(k==='cur') S.modal={type:'cmp',title:'Compare with current · '+title(p),ll:'Snapshot version',l:cp,rl:'Current page',r:content(p),upd:isAuthor()&&(pageChanged(s,p)||snapEdited(s,p))&&(s.state==='Draft'||entryFor(s,p).review==='Needs changes')?{id:s.id,p}:null};
+    else S.modal={type:'cmp',single:true,title:'Preview · '+title(p),note:'How this page will look when '+esc(s.title)+' publishes. It isn\'t live yet.',ll:'Snapshot version',l:cp}; },
+  cmpSnaps(el){ const p=el.dataset.p,s=snap(S.snapId),o=snap(el.dataset.o); S.modal={type:'cmp',title:'Compare · '+title(p),note:'Two snapshots hold their own copy of this page. Check which version should go live.',ll:s.title,l:copyFor(s,p),rl:o.title,r:copyFor(o,p)}; },
+  viewChanges(el){ const s=snap(el.dataset.id),p=S.path;
+    S.modal={type:'cmp',title:'View changes · '+title(p),note:pageChanged(s,p)?'The page was edited after it was added to '+esc(s.title)+'. Keep it as is, or overwrite the snapshot with the current page.':'',ll:'Snapshot version',l:copyFor(s,p),rl:'Current page',r:content(p),upd:isAuthor()&&s.state==='Draft'&&pageChanged(s,p)?{id:s.id,p}:null}; },
+  updateSnap(el){ A.doUpdate({dataset:{id:el.dataset.id,p:S.path}}); },
+  doUpdate(el){ const s=snap(el.dataset.id); s.base=s.base||{}; [el.dataset.p].concat(kids(el.dataset.p)).forEach(x=>{ s.copies[x]=clone(content(x)); s.base[x]=clone(content(x)); }); const en=s.pages.find(x=>x.path===el.dataset.p); if(en&&s.launch) en.synced=true; S.modal=null; toast('Snapshot overwritten from the current page'); },
+  swapImg(){ const c=cur(); c.img=IMGS[(IMGS.indexOf(c.img)+1)%IMGS.length]; },
+  mv(el){ const c=cur(),i=+el.dataset.i,j=i+ +el.dataset.d; if(j<0||j>=c.blocks.length) return; [c.blocks[i],c.blocks[j]]=[c.blocks[j],c.blocks[i]]; },
+  rmBlock(el){ cur().blocks.splice(+el.dataset.i,1); },
+  addBlock(){ cur().blocks.push({id:'n'+Date.now(),t:'New promo block'}); },
+  toggleBlock(){ const s=snap(S.snapId); if(s.state!=='Draft'||!isAuthor()) return; s.blockDirect=!s.blockDirect; if(s.blockDirect&&!s.earlyAllowed) s.earlyAllowed=['sarah']; toast(s.blockDirect?'Direct publish blocked for pages in '+s.title:'Direct publish allowed again for pages in '+s.title); },
+  toggleHold(){ const s=snap(S.snapId); if(s.state!=='Draft'||!isAuthor()) return; s.exclusive=!s.exclusive; toast(s.exclusive?'Other snapshots can no longer add pages from '+s.title:'Pages in '+s.title+' can be added to other snapshots again'); },
+  schedule(){ S.modal={type:'schedule'}; },
+  saveSchedule(){ const v=document.getElementById('when').value; if(!v){ toast('Pick a date and time'); return; } snap(S.snapId).scheduledFor=new Date(v+':00-08:00').toISOString(); S.modal=null; toast('Scheduled'); },
+  unschedule(){ snap(S.snapId).scheduledFor=null; S.modal=null; toast('Schedule cleared'); },
+  reqReview(){ S.modal={type:'request'}; },
+  sendRequest(){ const m=S.modal; const wf=document.getElementById('wfsel').value, w=WORKFLOWS[wf], nt=document.getElementById('nt').value.trim();
+    if(nt.length<5){ toast('Add a note for reviewers (at least 5 characters)'); return; }
+    let sched=null; if(m.scope==='page'&&document.getElementById('pubmode')&&document.getElementById('pubmode').value==='later'){ const v=document.getElementById('pubwhen').value, d=new Date(v+':00-08:00'); if(!v||d<=NOW()){ toast('Pick a time in the future'); return; } sched=d.toISOString(); }
+    let s;
+    if(m.scope==='page'){ s=makePageRequest(m.path,wf); if(sched) s.scheduledFor=sched; } else { s=snap(S.snapId); }
+    s.state='In review'; s.locked=true; s.requestedBy=uname(meId()); s.requestedAt=tick(); s.approvals={}; s.workflow=wf; s.steps=clone(w.steps); s.step=0; s.approvers=w.steps[0].approvers.slice(); s.watchers=w.watchers.slice(); s.pages.forEach(p=>p.review='Not reviewed');
+    addComment(s.id,null,'request-note',nt);
+    S.modal=null; toast('Review requested · '+stepNames(w.steps[0].approvers)+' to review'+(w.steps.length>1?' (step 1 of '+w.steps.length+')':'')+(w.watchers.length?` · ${stepNames(w.watchers)} notified`:'')+notifyM(nt)); },
+  todaySubmit(){ const t=document.getElementById('tdesc').value.trim(); if(t.length<5){ toast('Minimum 5 characters required'); return; }
+    const w=WORKFLOWS['Request publish']; const s=makePageRequest(S.modal.path,'Request publish'); s.state='In review'; s.locked=true; s.workflow='Request publish'; s.steps=clone(w.steps); s.step=0; s.approvers=w.steps[0].approvers.slice(); s.watchers=w.watchers.slice(); addComment(s.id,null,'request-note',t);
+    S.modal=null; toast('Publish requested'); },
+  reqPage(){ S.modal={type:'request',scope:'page',path:S.path}; },
+  reqPanel(){ S.panels=false; S.modal=idea()?{type:'request',scope:'page',path:S.path}:{type:'todayRequest',path:S.path}; },
+  reviewChanges(){ const p=S.modal.path; S.modal={type:'cmp',title:'Review changes · '+title(p),ll:'Live',l:db.liveContent[p]||null,rl:'Current page',r:content(p)}; },
+  resend(){ toast('Notification sent again to the reviewers on the current step'); },
+  withdrawReq(el){ const w=snap(el.dataset.id); if(w) archiveReq(w); db.snapshots=db.snapshots.filter(x=>x.id!==el.dataset.id); toast('Request withdrawn'); },
+  share(){ S.modal={type:'share'}; },
+  sendBack(){ const s=snap(S.snapId); s.pages.forEach(p=>{ if(p.review==='Needs changes') p.review='Not reviewed'; }); toast('Sent back. Only pages not yet approved return to the reviewer.'); },
+  publishNow(){ publish(snap(S.snapId),uname(meId())); },
+  reply(){ const t=document.getElementById('reply').value.trim(); if(!t) return; addComment(S.snapId,null,'reply',t); toast('Comment posted'+notifyM(t)); },
+  replyEd(){ const t=document.getElementById('reply').value.trim(); if(!t) return; addComment(document.getElementById('rsnap').value,S.path,'reply',t); toast('Comment posted'+notifyM(t)); },
+  openReview(el){ S.snapId=el.dataset.id; S.screen='review'; S.reasonOpen=false; S.revPath=null; },
+  revPick(el){ S.revPath=el.dataset.p; S.reasonOpen=false; },
+  approve(){ const s=snap(S.snapId),p=s.pages.find(x=>x.path===S.revPath); p.review='Approved'; S.reasonOpen=false; autoDone(s.id,p.path); s.approvals=s.approvals||{}; (s.approvals[s.step]=s.approvals[s.step]||[]).push({page:p.path,who:uname(meId()),behalf:viaGroup(meId(),s),when:tick()});
+    if(!s.pages.every(x=>x.review==='Approved')){ toast('Approved'); return; }
+    const last=!s.steps||s.step>=s.steps.length-1;
+    if(!last){ const done=s.steps[s.step].title; s.step++; s.pages.forEach(x=>x.review='Not reviewed'); toast(`${done} complete. Next: ${s.steps[s.step].title} (${stepNames(s.steps[s.step].approvers)})`); }
+    else if(s.single&&!s.scheduledFor){ publish(s,'Automatic, on final approval'); }
+    else toast('All pages approved'+(s.scheduledFor?' · publishes '+fmt(s.scheduledFor):'')); },
+  reasonOpen(){ S.reasonOpen=true; },
+  reasonCancel(){ S.reasonOpen=false; },
+  reasonSend(){ const t=document.getElementById('reason').value.trim(); if(!t){ toast('A reason is required'); return; }
+    const s=snap(S.snapId),p=s.pages.find(x=>x.path===S.revPath); p.review='Needs changes'; autoDone(s.id,p.path); addComment(s.id,p.path,'reject-reason',t); S.reasonOpen=false; toast('Changes requested · the author is notified'+notifyM(t)); },
+  ff(){ const s=db.snapshots.find(x=>x.state==='In review'&&x.pages.every(p=>p.review==='Approved')&&x.scheduledFor); if(s) publish(s,'Scheduled publish'); else { const ps=Object.entries(db.pageSchedule).sort((a,b)=>new Date(a[1])-new Date(b[1]))[0]; if(ps){ db.live[ps[0]]=ps[1]; db.liveContent[ps[0]]=clone(content(ps[0])); delete db.pageSchedule[ps[0]]; toast(title(ps[0])+' is live (scheduled publish)'); } else toast('Nothing approved and scheduled to publish yet'); } },
+  unlock(){ snap(S.snapId).locked=false; toast('Unlocked'); },
+  cancelReview(){ const s=snap(S.snapId); if(s.single){ archiveReq(s); db.snapshots=db.snapshots.filter(x=>x.id!==s.id); S.screen='snapshots'; toast('Request withdrawn'); return; } s.step=0; s.approvals={}; s.state='Draft'; s.locked=false; s.pages.forEach(p=>p.review='Not reviewed'); addComment(s.id,null,'reply','Review canceled so the snapshot can be edited.'); toast('Review canceled. '+s.title+' is a draft again and can be edited.'); },
+  openLink(el){ const s=snap(S.snapId); toast('Opens '+s.id+'--main--'+DATA.site+'--'+DATA.org+'.aem.reviews'+el.dataset.p+' (mock)'); },
+  openLive(el){ toast('Opens the live page '+el.dataset.p+' (mock)'); },
+  openMain(el){ S.editSnap=null; S.path=el.dataset.p; S.screen='editor'; S.tab='Versions'; },
+  backMain(){ S.editSnap=null; },
+  editSnapVer(el){ const s=snap(S.snapId||S.editSnap), e=entryFor(s,el.dataset.p);
+    if(!e.synced){ copyApply('fork',s.id,[e.path],'overwrite',true); }
+    S.editSnap=s.id; S.path=e.path; S.screen='editor'; S.tab='Versions'; },
+  promoteOne(el){ const sid=el.dataset.sid||S.snapId; S.modal={type:'copyMode',dir:'promote',snap:sid,paths:[el.dataset.p]}; },
+  updateFrom(el){ const s=snap(S.snapId), e=entryFor(s,el.dataset.p);
+    if(entryEdited(s,e)) S.modal={type:'copyMode',dir:'fork',snap:s.id,paths:[e.path]}; else A.doUpdate({dataset:{id:s.id,p:el.dataset.p}}); },
+  enableLaunchAsk(el){ if(el&&el.dataset&&el.dataset.sid) S.snapId=el.dataset.sid; S.modal={type:'enableLaunch'}; },
+  enableLaunch(){ snap(S.snapId).launch=true; S.modal=null; toast('Launch is on for '+snap(S.snapId).title); },
+  launchOverwriteAll(){ const s=snap(S.snapId), paths=s.pages.filter(e=>entryChanged(s,e)).map(e=>e.path);
+    if(s.pages.some(e=>entryChanged(s,e)&&entryEdited(s,e))) S.modal={type:'copyMode',dir:'fork',snap:s.id,paths}; else copyApply('fork',s.id,paths,'overwrite'); },
+  launchPromoteAll(){ const s=snap(S.snapId); S.modal={type:'copyMode',dir:'promote',snap:s.id,paths:s.pages.filter(e=>canPromote(s,e)).map(e=>e.path)}; },
+  copyDo(el){ const m=S.modal; S.modal=null; copyApply(m.dir,m.snap,m.paths,el.dataset.mode); },
+  savePw(){ snap(S.snapId).password=document.getElementById('shpw').value.trim(); S.modal=null; toast(snap(S.snapId).password?'Password saved':'Password removed'); },
+  copyLinks(){ S.modal=null; toast('Review links copied (mock)'); },
+  fragments(){ S.modal={type:'fragments'}; },
+  addFragments(){ const s=snap(S.snapId); const vals=[...document.querySelectorAll('#fglist input:checked')].map(i=>i.value); if(!vals.length){ toast('Pick at least one fragment'); return; }
+    s.copies=s.copies||{}; s.base=s.base||{}; vals.forEach(f=>{ if(!entryFor(s,f)){ s.pages.push({path:f,review:'Not reviewed',isFragment:true}); s.copies[f]=clone(content(f)); s.base[f]=clone(content(f)); } });
+    S.modal=null; toast(`Added ${vals.length} fragment${vals.length>1?'s':''} to ${s.title}`); },
+  edMore(){ S.menu='edmore'; },
+  toggleEarly(el){ const s=snap(S.snapId); if(!editable(s)||!isAuthor()) return; s.earlyAllowed=s.earlyAllowed||[]; const i=s.earlyAllowed.indexOf(el.dataset.u); if(i>=0) s.earlyAllowed.splice(i,1); else s.earlyAllowed.push(el.dataset.u); },
+  publishEarlyAsk(){ S.sendOpen=false; S.modal={type:'publishEarly',path:S.path}; },
+  publishEarly(){ const p=S.modal.path, r=document.getElementById('pereason').value.trim(); if(r.length<5){ toast('A reason is required (at least 5 characters)'); return; } if(!canPublishEarly(p)){ toast('You are not allowed to publish this page early'); S.modal=null; return; }
+    const bl=blockers(p); const when=tick(); db.live[p]=when; db.liveContent[p]=clone(content(p)); db.ver[p]=(db.ver[p]||0)+1; db.liveVia[p]=null;
+    db.early.push({path:p,by:uname(meId()),reason:r,when,blockedBy:bl.map(b=>b.id),version:db.ver[p]}); addComment(bl[0].id,p,'early-publish',r); S.modal=null; toast(title(p)+' published early · recorded with your reason'+notifyM(r)); },
+  exportRecord(){ toast('Publish record downloaded (mock)'); },
+  editDetails(){ S.modal={type:'editDetails'}; },
+  saveDetails(){ const t=document.getElementById('edt').value.trim(); if(!t){ toast('A title is required'); return; } const sn=snap(S.snapId); sn.title=t; sn.description=document.getElementById('edd').value.trim(); S.modal=null; toast('Details saved'); },
+  sendReqSnap(el){ S.snapId=el.dataset.id; S.sendOpen=false; S.modal={type:'request'}; },
+  pageSchedOpen(){ S.modal={type:'pageSchedule',path:S.path}; },
+  savePageSched(){ const v=document.getElementById('psw').value, d=new Date(v+':00-08:00'); if(!v||d<=NOW()){ toast('Pick a time in the future'); return; } db.pageSchedule[S.modal.path]=d.toISOString(); S.modal=null; toast('Scheduled · '+title(S.path)+' publishes '+fmt(d.toISOString())); },
+  clearPageSched(){ delete db.pageSchedule[S.path]; S.modal=null; toast('Schedule canceled'); },
+  inbox(){ S.inbox=!S.inbox; },
+  inboxReadAll(){ inboxItems().forEach(i=>S.inboxRead.add(i.key)); },
+  inboxOpen(el){ const it=inboxItems().find(x=>x.key===el.dataset.k); S.inbox=false; if(!it) return; S.inboxRead.add(it.key); S.editSnap=null;
+    if(it.kind==='task'){ S.snapId=it.snap; S.screen='review'; S.reasonOpen=false; S.revPath=null; }
+    else if(it.kind==='mention'){ const c=it.c, sx=snap(c.snap); if(c.page&&!isFolder(c.page)){ S.path=c.page; S.screen='editor'; S.tab='Comments'; } else if(sx){ S.snapId=sx.id; S.screen='snapshot'; } else toast('That request is in Earlier requests on its page'); }
+    else { const sx=snap(it.snap); if(sx&&sx.single){ S.path=sx.pages[0].path; S.screen='editor'; S.tab='Review'; } else { S.snapId=it.snap; S.screen='snapshot'; } } },
+  cmDone(el){ const c=db.comments[+el.dataset.i], me=meId(); const mine=c.author!==me&&mentionsIn(c.text).some(n=>myNames().includes(n)); c.done={by:uname(me),kind:mine?'done':'resolved'}; toast(mine?'Marked as done':'Resolved'); },
+  cmReopen(el){ delete db.comments[+el.dataset.i].done; toast('Reopened'); },
+  toggleResolved(){ S.resolvedOpen=!S.resolvedOpen; },
+  toggleEarlier(){ S.earlierOpen=!S.earlierOpen; },
+  tabReview(){ S.tab='Review'; S.panels=false; },
+  railCompare(el){ const sn=snap(el.dataset.sid), p=S.path; S.modal={type:'cmp',title:'Review · '+title(p),ll:'Live',l:db.liveContent[p]||null,rl:'Snapshot version',r:copyFor(sn,p)}; },
+  railSendBack(el){ const sn=snap(el.dataset.sid), e=entryFor(sn,el.dataset.p); e.review='Not reviewed'; S.sendOpen=false; toast('Sent back for review. Only this page returns to the reviewer.'); },
+  railApprove(el){ S.snapId=el.dataset.sid; S.revPath=el.dataset.p; A.approve(); },
+  railReasonOpen(el){ S.railReason={sid:el.dataset.sid,p:el.dataset.p}; },
+  railReasonCancel(){ S.railReason=null; },
+  railRejectSend(el){ const t=document.getElementById('rreason').value.trim(); if(!t){ toast('A reason is required'); return; }
+    const sn=snap(el.dataset.sid), e=sn.pages.find(x=>x.path===el.dataset.p); e.review='Needs changes'; autoDone(sn.id,e.path); addComment(sn.id,e.path,'reject-reason',t); S.railReason=null; toast('Changes requested · the author is notified'+notifyM(t)); },
+  close(){ S.modal=null; },
+  ovClose(el,e){ if(e.target===el) S.modal=null; }
+};
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]'); const had=S.menu||S.panels||S.sendOpen||S.inbox;
+  if(!a){ if(had){ if(!e.target.closest('.pop')&&!e.target.closest('.inbox')){ S.menu=null; S.panels=false; S.sendOpen=false; S.inbox=false; render(); } } return; }
+  if(a.dataset.act==='ovClose'&&e.target!==a) return;
+  const keep=a.dataset.act==='send'||a.closest('.pop');
+  S.menu=null; S.panels=false; if(!keep) S.sendOpen=false; if(a.dataset.act!=='inbox'&&a.dataset.act!=='inboxReadAll') S.inbox=false;
+  (A[a.dataset.act]||(()=>{}))(a,e); render();
+});
+document.addEventListener('input',e=>{
+  const el=e.target.closest&&e.target.closest('[data-edit]'); if(!el) return;
+  const c=cur(),t=el.textContent.replace(/\s+/g,' ').trim(),k=el.dataset.edit;
+  if(k==='block'){ const b=c.blocks.find(x=>x.id===el.dataset.bid); if(b) b.t=t; } else c[k]=t;
+  if(sigOf()!==S.sig) refreshChrome();
+});
+document.addEventListener('input',e=>{ const t=e.target; if(t.matches&&t.matches('textarea[data-mention]')) mentionPop(t); });
+document.addEventListener('focusout',e=>{ const t=e.target; if(t.matches&&t.matches('textarea[data-mention]')) document.getElementById('mpop').style.display='none'; });
+init(); render();
+</script>
+</body>
+</html>
