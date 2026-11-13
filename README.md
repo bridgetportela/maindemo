@@ -1,10 +1,10 @@
 Demo Project - Cloud Adoption
 
 ## Environments
-- Preview: https://main--demo--scdemos.aem.page/
-- Live: https://main--demo--scdemos.aem.live/
+- Preview: https://main--maindemo--bridgetportela.aem.page/
+- Live: https://main--maindemo--bridgetportela.aem.live/
 - CDN (production): https://demo.bbird.live/
-- Authoring (DA): https://da.live/#/scdemos/demo
+- Authoring (DA): https://da.live/#/bridgetportela/maindemo
 
 ## Create a customer demo (one command)
 
